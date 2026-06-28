@@ -103,17 +103,17 @@ export class BasePage {
             <div>
               <h4 class="mb-3">About Akart</h4>
               <ul style="list-style: none;">
-                <li><a href="/about">About Us</a></li>
-                <li><a href="/careers">Careers</a></li>
-                <li><a href="/press">Press</a></li>
+                <li><a href="/privacy">About Us</a></li>
+                <li><a href="/terms">Careers</a></li>
+                <li><a href="/terms">Press</a></li>
               </ul>
             </div>
             <div>
               <h4 class="mb-3">Customer Service</h4>
               <ul style="list-style: none;">
-                <li><a href="/contact">Contact Us</a></li>
-                <li><a href="/faq">FAQ</a></li>
-                <li><a href="/shipping">Shipping Info</a></li>
+                <li><a href="/terms">Contact Us</a></li>
+                <li><a href="/terms">FAQ</a></li>
+                <li><a href="/shipping-policy">Shipping Info</a></li>
               </ul>
             </div>
             <div>
@@ -121,12 +121,12 @@ export class BasePage {
               <ul style="list-style: none;">
                 <li><a href="/terms">Terms & Conditions</a></li>
                 <li><a href="/privacy">Privacy Policy</a></li>
-                <li><a href="/refund">Refund Policy</a></li>
+                <li><a href="/return-policy">Refund Policy</a></li>
               </ul>
             </div>
           </div>
           <div class="text-center text-muted border-top pt-4">
-            <p>&copy; 2024 Akart. All rights reserved.</p>
+            <p>&copy; 2026 Akart. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -148,7 +148,8 @@ export class BasePage {
           <div class="flex-center gap-4">
             <input type="search" class="input" placeholder="Search products..." style="width: 300px;">
             <a href="/cart" class="btn btn-sm">🛒 Cart</a>
-            <a href="/profile" class="btn btn-sm">👤 Profile</a>
+            <a href="/login" class="btn btn-sm">🔐 Login</a>
+            <a href="/register" class="btn btn-sm">✍️ Register</a>
             <button class="btn btn-sm" onclick="document.body.classList.toggle('dark-mode')">🌙</button>
           </div>
         </div>

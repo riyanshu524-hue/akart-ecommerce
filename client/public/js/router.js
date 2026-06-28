@@ -18,10 +18,14 @@ import SettingsPage from '../pages/SettingsPage.js';
 import AddressBookPage from '../pages/AddressBookPage.js';
 import PaymentMethodsPage from '../pages/PaymentMethodsPage.js';
 import VendorPage from '../pages/VendorPage.js';
+import LoginPage from '../pages/LoginPage.js';
+import RegisterPage from '../pages/RegisterPage.js';
 import NotFound from '../pages/NotFound.js';
 
 const routes = {
   '/': HomePage,
+  '/login': LoginPage,
+  '/register': RegisterPage,
   '/products': ProductsPage,
   '/product/:id': ProductDetailPage,
   '/cart': CartPage,
@@ -65,12 +69,10 @@ export class Router {
   }
 
   init() {
-    // Handle popstate for back/forward buttons
     window.addEventListener('popstate', () => {
       this.navigate(window.location.pathname);
     });
 
-    // Handle link clicks
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a');
       if (link && link.href.startsWith('/') && !link.href.includes('://')) {
@@ -84,27 +86,19 @@ export class Router {
     try {
       const { component, params } = getRoute(path);
       
-      // Create new page instance
       const page = new component(params);
-      
-      // Render page
       const html = await page.render();
       this.appContainer.innerHTML = html;
       
-      // Initialize page
       if (page.init) {
         await page.init();
       }
       
-      // Update browser history
       if (window.location.pathname !== path) {
         window.history.pushState({}, '', path);
       }
       
-      // Update page title
       document.title = page.title || 'Akart';
-      
-      // Scroll to top
       window.scrollTo(0, 0);
       
       this.currentPage = page;
