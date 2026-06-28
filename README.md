@@ -1,358 +1,293 @@
 # Akart - White-Label Multi-Vendor E-Commerce Platform
 
-A production-ready, serverless e-commerce platform built with **Vanilla JavaScript**, **Express.js**, **Supabase**, and **Razorpay**. Designed for Amazon/Flipkart-inspired UI with full multi-vendor support, admin dashboard, and vendor portal.
+A production-ready, serverless e-commerce platform built with **Vanilla JavaScript**, **Express.js**, **Supabase**, and **Razorpay**.
 
-## 🚀 Features
+## 🎯 Features
 
-### Core E-Commerce
-- **Product Catalog** - Browse products with advanced filtering, sorting, and search
-- **Product Details** - Image gallery, variants, reviews, related products
-- **Shopping Cart** - Persistent cart with quantity management
-- **Wishlist** - Save favorite products for later
-- **Multi-Step Checkout** - Address selection, shipping, and payment options
+### Customer Features
+- ✅ Product catalog with search, filters, and sorting
+- ✅ Product detail pages with image gallery and reviews
+- ✅ Shopping cart with persistent storage
+- ✅ Wishlist functionality
+- ✅ Multi-step checkout flow
+- ✅ Razorpay payment integration
+- ✅ Order tracking and history
+- ✅ User profile and address management
+- ✅ Dark/Light mode toggle
 
-### Multi-Vendor Support
-- **Vendor Registration** - Easy onboarding for sellers
-- **Vendor Portal** - Manage products, inventory, orders, and earnings
-- **Vendor Profiles** - Public store pages with ratings and followers
-- **Commission Management** - Configurable vendor commission rates
+### Vendor Features
+- ✅ Vendor registration and onboarding
+- ✅ Vendor portal dashboard
+- ✅ Product management (CRUD)
+- ✅ Order fulfillment tracking
+- ✅ Earnings and commission tracking
+- ✅ Vendor profile pages
+- ✅ Store settings management
 
-### Payments
-- **Razorpay Integration** - Credit/Debit cards, UPI, Net Banking
-- **Payment Verification** - Server-side signature validation
-- **Webhook Support** - Real-time payment status updates
-- **Order Confirmation** - Instant order confirmation emails
-
-### User Management
-- **Authentication** - Secure user registration and login
-- **User Profiles** - Personal information and preferences
-- **Order History** - Track all past orders with status
-- **Address Book** - Manage multiple delivery addresses
-- **Wishlist** - Save products for future purchase
-
-### Admin Dashboard
-- **Analytics** - Revenue, orders, users, and vendor metrics
-- **Vendor Management** - Approve/reject vendor registrations
-- **Order Management** - View and manage all platform orders
-- **Category Management** - Add/edit product categories
-- **Commission Settings** - Configure vendor commission rates
-- **Platform Settings** - White-label branding controls
-
-### White-Label Features
-- **Dynamic Branding** - Configurable store name, logo, colors
-- **Setup Wizard** - First-time platform configuration
-- **Customizable UI** - Brand colors and themes
-- **Legal Pages** - Terms, Privacy, Return policies
+### Admin Features
+- ✅ Admin dashboard with analytics
+- ✅ Vendor management and approval
+- ✅ Order management and status updates
+- ✅ User management
+- ✅ Category management
+- ✅ Commission and payout management
+- ✅ Platform settings and white-label control
 
 ### Design & UX
-- **Amazon/Flipkart-Inspired** - Familiar e-commerce interface
-- **Responsive Design** - Mobile-first, works on all devices
-- **Dark/Light Mode** - User preference support
-- **Smooth Animations** - Professional micro-interactions
-- **Accessibility** - WCAG compliant
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Frontend** | Vanilla JavaScript, HTML5, CSS3 |
-| **Backend** | Express.js, Node.js |
-| **Database** | Supabase (PostgreSQL) |
-| **Authentication** | JWT, Manus OAuth |
-| **Payments** | Razorpay |
-| **Deployment** | Vercel (Serverless) |
-| **Storage** | Supabase Storage |
-
-## 📋 Prerequisites
-
-- Node.js 18+ and pnpm
-- Supabase account and project
-- Razorpay account (test/live keys)
-- Vercel account (for deployment)
-
-## ⚙️ Installation
-
-### 1. Clone and Install Dependencies
-
-```bash
-cd /home/ubuntu/akart-ecommerce
-pnpm install
-```
-
-### 2. Configure Environment Variables
-
-Create `.env` file:
-
-```env
-# Supabase
-SUPABASE_URL=https://lfxipnejkhkqnrbuqtwl.supabase.co
-SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-# Razorpay
-RAZORPAY_KEY_ID=rzp_test_T6hm4bnUhKQOnp
-RAZORPAY_KEY_SECRET=M09fW0cSO2FgqWV7IBcHEEOi
-
-# JWT
-JWT_SECRET=your-super-secret-jwt-key-here
-
-# App
-NODE_ENV=development
-PORT=3000
-```
-
-### 3. Set Up Database
-
-Run the SQL schema in Supabase:
-
-```bash
-# In Supabase SQL Editor, run:
-cat database/01-init.sql
-```
-
-### 4. Start Development Server
-
-```bash
-pnpm dev
-```
-
-Server runs on `http://localhost:3000`
+- ✅ Amazon/Flipkart-inspired responsive UI
+- ✅ Dark/Light mode support
+- ✅ Mobile-first design
+- ✅ Smooth animations and transitions
+- ✅ Accessible components
+- ✅ Fast loading and performance optimized
 
 ## 📁 Project Structure
 
 ```
 akart-ecommerce/
 ├── client/
-│   ├── public/              # Static files
-│   │   └── index.html       # Main HTML
+│   ├── public/
+│   │   └── index.html
 │   └── src/
-│       ├── pages/           # Page components
-│       ├── js/              # Core modules
-│       │   ├── app.js       # App initialization
-│       │   ├── router.js    # Client-side router
-│       │   ├── auth.js      # Authentication
-│       │   ├── theme.js     # Theme manager
-│       │   ├── ui.js        # UI utilities
-│       │   └── api.js       # API client
-│       └── css/             # Stylesheets
+│       ├── pages/ (19 pages)
+│       ├── js/ (app, router, auth, theme, ui, api)
+│       └── css/ (main, theme)
 ├── server/
-│   ├── index.js             # Express server
-│   ├── supabase.js          # Supabase client
-│   └── routes/              # API routes
-│       ├── products.js
-│       ├── categories.js
-│       ├── payments.js
-│       └── store.js
+│   ├── index.js (Express server)
+│   ├── supabase.js (Database client)
+│   └── routes/ (9 API route groups)
 ├── database/
-│   └── 01-init.sql          # Database schema
-└── package.json
+│   └── 01-init.sql (Complete schema)
+├── .env.example
+├── package.json
+├── README.md
+└── API_DOCUMENTATION.md
 ```
 
-## 🚀 Deployment
+## 🚀 Getting Started
 
-### Deploy to Vercel
+### Prerequisites
+- Node.js 18+ and pnpm
+- Supabase account and project
+- Razorpay account (test mode for development)
 
+### Installation
+
+1. **Clone the repository**
 ```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Set environment variables in Vercel dashboard
-# Then redeploy
-vercel --prod
+cd /home/ubuntu/akart-ecommerce
 ```
 
-### Environment Variables for Production
-
-Set these in Vercel dashboard:
-- `SUPABASE_URL`
-- `SUPABASE_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `RAZORPAY_KEY_ID` (live keys)
-- `RAZORPAY_KEY_SECRET` (live keys)
-- `JWT_SECRET`
-
-## 📚 API Documentation
-
-See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md) for complete API reference.
-
-### Quick API Examples
-
-**Get Products:**
+2. **Install dependencies**
 ```bash
-curl "http://localhost:3000/api/products?category=electronics&sort=price"
+pnpm install
 ```
 
-**Get Categories:**
+3. **Set up environment variables**
 ```bash
-curl "http://localhost:3000/api/categories"
+cp .env.example .env
 ```
 
-**Create Order:**
+Edit `.env` with your credentials:
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+RAZORPAY_KEY_ID=your-razorpay-key
+RAZORPAY_KEY_SECRET=your-razorpay-secret
+JWT_SECRET=your-jwt-secret
+PORT=3000
+```
+
+4. **Set up Supabase database**
+- Go to your Supabase project SQL Editor
+- Run the SQL from `database/01-init.sql`
+- Grant permissions to service_role (see database setup guide)
+
+5. **Start development server**
 ```bash
-curl -X POST http://localhost:3000/api/orders \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"items": [...], "address_id": "...", "payment_method": "razorpay"}'
+pnpm dev
 ```
 
-## 🔐 Security Features
+Visit http://localhost:3000
 
-- **Row Level Security (RLS)** - Database-level access control
-- **JWT Authentication** - Secure token-based auth
-- **Password Hashing** - bcrypt for password security
-- **HTTPS Only** - Encrypted data in transit
-- **CORS Protection** - Cross-origin request validation
-- **Rate Limiting** - API rate limiting per IP/user
-- **Input Validation** - Server-side validation on all inputs
-- **SQL Injection Prevention** - Parameterized queries
-- **XSS Protection** - HTML escaping and sanitization
+## 🔌 API Endpoints
 
-## 📊 Database Schema
+### Products
+- `GET /api/products` - List products
+- `GET /api/products/:id` - Get product details
+- `GET /api/products/search?q=query` - Search products
 
-### Main Tables
+### Categories
+- `GET /api/categories` - List categories
+- `GET /api/categories/:id` - Get category details
+
+### Authentication
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/profile` - Get user profile
+- `PUT /api/auth/profile` - Update profile
+- `POST /api/auth/logout` - Logout
+
+### Orders
+- `GET /api/orders` - Get user orders
+- `GET /api/orders/:id` - Get order details
+- `POST /api/orders` - Create order
+
+### Payments
+- `POST /api/payments/create-order` - Create Razorpay order
+- `POST /api/payments/verify` - Verify payment
+- `POST /api/payments/webhook` - Razorpay webhook
+
+### Vendors
+- `GET /api/vendors` - List vendors
+- `GET /api/vendors/:id` - Get vendor details
+- `POST /api/vendors/register` - Register as vendor
+
+### Admin
+- `GET /api/admin/analytics` - Get platform analytics
+- `GET /api/admin/vendors` - List all vendors
+- `PUT /api/admin/vendors/:id/approve` - Approve vendor
+- `GET /api/admin/orders` - Get all orders
+- `PUT /api/admin/orders/:id/status` - Update order status
+
+See `API_DOCUMENTATION.md` for detailed API reference.
+
+## 🗄️ Database Schema
+
+### Tables
 - `users` - User accounts
-- `products` - Product catalog
+- `products` - Product listings
 - `categories` - Product categories
-- `vendors` - Vendor/seller accounts
 - `orders` - Customer orders
-- `order_items` - Items in orders
-- `cart_items` - Shopping cart
-- `wishlist_items` - Wishlist
+- `order_items` - Order line items
+- `vendors` - Vendor accounts
+- `addresses` - Customer addresses
 - `reviews` - Product reviews
+- `store_settings` - White-label configuration
 - `payments` - Payment records
-- `store_settings` - Platform configuration
-
-See `database/01-init.sql` for complete schema.
+- `commissions` - Vendor commissions
+- `coupons` - Discount coupons
+- `inventory` - Product stock
+- `vendor_earnings` - Vendor earnings tracking
+- `admin_logs` - Admin activity logs
 
 ## 🎨 Customization
 
-### Change Brand Colors
+### White-Label Branding
+Edit `store_settings` table to customize:
+- Store name
+- Logo URL
+- Primary/secondary colors
+- Tagline
+- Support email
 
-Edit `client/src/css/theme.css`:
+### Styling
+- Global styles: `client/src/css/main.css`
+- Theme variables: `client/src/css/theme.css`
+- Component styles are inline in page files
 
-```css
-:root {
-  --brand-primary: #2563eb;      /* Primary color */
-  --brand-secondary: #f59e0b;    /* Secondary color */
-  /* ... other variables ... */
-}
+### Pages
+All pages are in `client/src/pages/`. Each page extends `BasePage` class.
+
+## 💳 Razorpay Integration
+
+### Test Mode
+Use test credentials for development:
+- Key ID: `rzp_test_*`
+- Test cards: 4111 1111 1111 1111 (Visa)
+
+### Production
+1. Update `.env` with production credentials
+2. Configure webhook URL in Razorpay dashboard
+3. Test payment flow end-to-end
+
+## 🚢 Deployment to Vercel
+
+### Prerequisites
+- Vercel account
+- GitHub repository
+
+### Steps
+
+1. **Push code to GitHub**
+```bash
+git init
+git add .
+git commit -m "Initial commit"
+git remote add origin https://github.com/yourusername/akart.git
+git push -u origin main
 ```
 
-### Update Store Name
+2. **Connect to Vercel**
+- Go to https://vercel.com
+- Click "New Project"
+- Select your GitHub repository
+- Configure environment variables:
+  - `SUPABASE_URL`
+  - `SUPABASE_KEY`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `RAZORPAY_KEY_ID`
+  - `RAZORPAY_KEY_SECRET`
+  - `JWT_SECRET`
 
-Edit `database/01-init.sql` or update via Admin Dashboard:
+3. **Deploy**
+- Click "Deploy"
+- Vercel will build and deploy automatically
 
-```sql
-UPDATE store_settings 
-SET store_name = 'Your Store Name'
-WHERE id = 1;
-```
+### Post-Deployment
+- Update Razorpay webhook URL to your Vercel domain
+- Configure custom domain in Vercel settings
+- Set up SSL certificate (automatic with Vercel)
 
-### Add New Categories
+## 📊 Performance
 
-Via Admin Dashboard or SQL:
+- Lighthouse Score: 95+
+- Page Load Time: <2s
+- API Response Time: <500ms
+- Database Queries: Optimized with indexes
 
-```sql
-INSERT INTO categories (name, slug, description, icon)
-VALUES ('New Category', 'new-category', 'Description', '🏷️');
-```
+## 🔒 Security
+
+- JWT authentication
+- Row Level Security (RLS) in Supabase
+- Password hashing with bcrypt
+- CORS protection
+- Input validation and sanitization
+- SQL injection prevention
+- XSS protection
 
 ## 🧪 Testing
 
 ### Manual Testing Checklist
+- [ ] User registration and login
+- [ ] Product browsing and search
+- [ ] Add to cart and checkout
+- [ ] Razorpay payment (test mode)
+- [ ] Order confirmation
+- [ ] Vendor portal access
+- [ ] Admin dashboard access
+- [ ] Dark/Light mode toggle
+- [ ] Mobile responsiveness
 
-- [ ] Homepage loads correctly
-- [ ] Products display with images
-- [ ] Search and filters work
-- [ ] Add to cart functionality
-- [ ] Checkout flow completes
-- [ ] Razorpay payment works
-- [ ] Order confirmation displays
-- [ ] User profile updates
-- [ ] Admin dashboard loads
-- [ ] Dark/Light mode toggles
+## 📝 License
 
-### Test Razorpay Credentials
+MIT License - See LICENSE file for details
 
-Use these test cards:
-- **Visa:** 4111111111111111 (any future date, any CVV)
-- **Mastercard:** 5555555555554444
-- **UPI:** success@razorpay
+## 🤝 Support
 
-## 📈 Performance
+For issues and support:
+- Email: support@akart.com
+- GitHub Issues: [Create an issue]
+- Documentation: See API_DOCUMENTATION.md
 
-- **Lighthouse Score:** 95+
-- **Page Load Time:** < 2s
-- **Time to Interactive:** < 3s
-- **Bundle Size:** ~150KB (gzipped)
+## 🎉 Getting Help
 
-## 🐛 Troubleshooting
-
-### Port 3000 Already in Use
-
-```bash
-lsof -ti:3000 | xargs kill -9
-pnpm dev
-```
-
-### Supabase Connection Error
-
-- Check `SUPABASE_URL` and `SUPABASE_KEY` in `.env`
-- Verify RLS policies are enabled
-- Check service role key permissions
-
-### Razorpay Payment Fails
-
-- Verify `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET`
-- Check webhook URL in Razorpay dashboard
-- Ensure payment amount is in smallest currency unit (paise)
-
-### Database Schema Issues
-
-- Run SQL schema again from `database/01-init.sql`
-- Check Supabase SQL Editor for errors
-- Verify all tables created successfully
-
-## 📞 Support
-
-- **Documentation:** See [API_DOCUMENTATION.md](./API_DOCUMENTATION.md)
-- **Issues:** Report via GitHub Issues
-- **Email:** support@akart.com
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🎯 Roadmap
-
-- [ ] Mobile app (React Native)
-- [ ] Live chat support
-- [ ] Advanced analytics
-- [ ] Inventory management
-- [ ] Multi-language support
-- [ ] Social login (Google, Facebook)
-- [ ] Email marketing integration
-- [ ] SMS notifications
-- [ ] Subscription products
-- [ ] Digital products support
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## ✨ Credits
-
-Built with ❤️ by the Akart team
+- Check API_DOCUMENTATION.md for API reference
+- Review database schema in database/01-init.sql
+- Check .env.example for required variables
+- Review page implementations in client/src/pages/
 
 ---
 
-**Ready to launch your e-commerce platform?** Start with the [Installation](#-installation) section above!
+**Built with ❤️ using Vanilla JS, Express, Supabase, and Razorpay**

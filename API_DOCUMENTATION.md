@@ -1,195 +1,704 @@
-# Akart E-Commerce Platform - API Documentation
+# Akart API Documentation
+
+Complete API reference for the Akart e-commerce platform.
 
 ## Base URL
+
 ```
-http://localhost:3000/api
+https://akart.vercel.app/api
 ```
 
 ## Authentication
-All protected endpoints require a valid JWT token in the `Authorization` header:
+
+Most endpoints require JWT authentication. Include the token in the Authorization header:
+
 ```
-Authorization: Bearer <token>
+Authorization: Bearer <jwt_token>
 ```
 
----
+## Response Format
 
-## Endpoints
+All responses are in JSON format:
 
-### Health Check
-**GET** `/health`
-- Returns server status
-- Response: `{ status: "ok", timestamp: "..." }`
-
-### Categories
-**GET** `/categories`
-- Get all active categories
-- Response: `{ categories: [...] }`
-
-**GET** `/categories/:id`
-- Get category with products
-- Response: `{ category: {...}, products: [...] }`
-
-### Products
-**GET** `/products`
-- Get products with filtering, sorting, pagination
-- Query params: `page`, `limit`, `category`, `search`, `minPrice`, `maxPrice`, `sort`, `order`
-- Response: `{ products: [...], pagination: {...} }`
-
-**GET** `/products/:id`
-- Get product details with variants and reviews
-- Response: `{ product: {...}, variants: [...], reviews: [...] }`
-
-**GET** `/products/:id/related`
-- Get related products
-- Response: `{ products: [...] }`
-
-### Store Settings
-**GET** `/store/info`
-- Get store branding information
-- Response: `{ store_name, store_tagline, store_logo_url, primary_color, secondary_color }`
-
-**PUT** `/store/info` (Admin only)
-- Update store settings
-- Body: `{ store_name, store_tagline, primary_color, secondary_color }`
-
-### Payments
-**POST** `/payments/create-order`
-- Create Razorpay order
-- Body: `{ amount, currency, customer_id, order_id }`
-- Response: `{ razorpay_order_id, keyId }`
-
-**POST** `/payments/verify`
-- Verify payment signature
-- Body: `{ razorpay_order_id, razorpay_payment_id, razorpay_signature }`
-- Response: `{ success: true, order_id }`
-
-**POST** `/payments/webhook`
-- Razorpay webhook endpoint
-- Verifies and processes payment events
-
-### Orders
-**GET** `/orders` (Protected)
-- Get user's orders
-- Response: `{ orders: [...] }`
-
-**POST** `/orders` (Protected)
-- Create new order
-- Body: `{ items: [...], address_id, shipping_method, payment_method }`
-- Response: `{ order_id, status, total }`
-
-**GET** `/orders/:id` (Protected)
-- Get order details
-- Response: `{ order: {...}, items: [...], tracking: {...} }`
-
-### Users
-**POST** `/users/register`
-- Register new user
-- Body: `{ email, password, name }`
-- Response: `{ user_id, token }`
-
-**POST** `/users/login`
-- Login user
-- Body: `{ email, password }`
-- Response: `{ user_id, token, user: {...} }`
-
-**GET** `/users/profile` (Protected)
-- Get current user profile
-- Response: `{ user: {...} }`
-
-**PUT** `/users/profile` (Protected)
-- Update user profile
-- Body: `{ name, phone, email }`
-- Response: `{ user: {...} }`
-
-### Addresses
-**GET** `/addresses` (Protected)
-- Get user's addresses
-- Response: `{ addresses: [...] }`
-
-**POST** `/addresses` (Protected)
-- Create new address
-- Body: `{ name, phone, address, city, state, pincode }`
-- Response: `{ address_id, address: {...} }`
-
-**PUT** `/addresses/:id` (Protected)
-- Update address
-- Body: `{ name, phone, address, city, state, pincode }`
-- Response: `{ address: {...} }`
-
-**DELETE** `/addresses/:id` (Protected)
-- Delete address
-- Response: `{ success: true }`
-
-### Vendors
-**GET** `/vendors`
-- Get all approved vendors
-- Response: `{ vendors: [...] }`
-
-**GET** `/vendors/:id`
-- Get vendor details
-- Response: `{ vendor: {...}, products: [...] }`
-
-**POST** `/vendors/register` (Protected)
-- Register as vendor
-- Body: `{ store_name, description, category }`
-- Response: `{ vendor_id, status }`
-
-**GET** `/vendors/dashboard` (Protected - Vendor only)
-- Get vendor dashboard data
-- Response: `{ sales, orders, earnings, products }`
-
-### Admin
-**GET** `/admin/analytics` (Protected - Admin only)
-- Get platform analytics
-- Response: `{ revenue, orders, users, vendors }`
-
-**GET** `/admin/vendors` (Protected - Admin only)
-- Get all vendors (pending and approved)
-- Response: `{ vendors: [...] }`
-
-**PUT** `/admin/vendors/:id/approve` (Protected - Admin only)
-- Approve vendor
-- Response: `{ vendor: {...} }`
-
-**GET** `/admin/orders` (Protected - Admin only)
-- Get all orders
-- Response: `{ orders: [...] }`
-
----
-
-## Error Responses
-
-All errors follow this format:
 ```json
 {
-  "error": "Error message",
-  "code": "ERROR_CODE",
-  "status": 400
+  "success": true,
+  "data": {},
+  "error": null
 }
 ```
 
-Common error codes:
-- `INVALID_REQUEST` - Invalid request parameters
-- `UNAUTHORIZED` - Missing or invalid authentication
+---
+
+## Products API
+
+### List Products
+
+**Endpoint:** `GET /products`
+
+**Query Parameters:**
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20)
+- `category` (optional): Filter by category ID
+- `sort` (optional): Sort by (newest, price_asc, price_desc, rating)
+- `min_price` (optional): Minimum price
+- `max_price` (optional): Maximum price
+
+**Response:**
+```json
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Product Name",
+      "description": "Description",
+      "price": 999,
+      "image": "url",
+      "category_id": 1,
+      "vendor_id": 1,
+      "rating": 4.5,
+      "reviews_count": 123
+    }
+  ],
+  "total": 100,
+  "page": 1
+}
+```
+
+### Get Product Details
+
+**Endpoint:** `GET /products/:id`
+
+**Response:**
+```json
+{
+  "product": {
+    "id": 1,
+    "name": "Product Name",
+    "description": "Description",
+    "price": 999,
+    "images": ["url1", "url2"],
+    "variants": [
+      {
+        "id": 1,
+        "name": "Size",
+        "options": ["S", "M", "L", "XL"]
+      }
+    ],
+    "reviews": [
+      {
+        "id": 1,
+        "author": "John Doe",
+        "rating": 5,
+        "comment": "Great product!",
+        "date": "2026-06-28"
+      }
+    ],
+    "related_products": [...]
+  }
+}
+```
+
+### Search Products
+
+**Endpoint:** `GET /products/search?q=query`
+
+**Query Parameters:**
+- `q`: Search query (required)
+
+**Response:**
+```json
+{
+  "results": [...],
+  "total": 10
+}
+```
+
+---
+
+## Categories API
+
+### List Categories
+
+**Endpoint:** `GET /categories`
+
+**Response:**
+```json
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Electronics",
+      "description": "Electronic devices",
+      "image": "url",
+      "product_count": 234
+    }
+  ]
+}
+```
+
+### Get Category Details
+
+**Endpoint:** `GET /categories/:id`
+
+**Response:**
+```json
+{
+  "category": {
+    "id": 1,
+    "name": "Electronics",
+    "description": "Electronic devices",
+    "subcategories": [...],
+    "products": [...]
+  }
+}
+```
+
+---
+
+## Authentication API
+
+### Register User
+
+**Endpoint:** `POST /auth/register`
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "John Doe"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "token": "jwt_token",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "name": "John Doe"
+  }
+}
+```
+
+### Login User
+
+**Endpoint:** `POST /auth/login`
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "token": "jwt_token",
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "name": "John Doe",
+    "role": "user"
+  }
+}
+```
+
+### Get User Profile
+
+**Endpoint:** `GET /auth/profile`
+
+**Headers:** Requires authentication
+
+**Response:**
+```json
+{
+  "user": {
+    "id": 1,
+    "email": "user@example.com",
+    "name": "John Doe",
+    "phone": "+91 98765 43210",
+    "role": "user",
+    "created_at": "2026-06-28"
+  }
+}
+```
+
+### Update User Profile
+
+**Endpoint:** `PUT /auth/profile`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "name": "John Doe",
+  "phone": "+91 98765 43210",
+  "email": "newemail@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "user": {...}
+}
+```
+
+### Logout
+
+**Endpoint:** `POST /auth/logout`
+
+**Headers:** Requires authentication
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Logged out successfully"
+}
+```
+
+---
+
+## Orders API
+
+### Get User Orders
+
+**Endpoint:** `GET /orders`
+
+**Headers:** Requires authentication
+
+**Query Parameters:**
+- `page` (optional): Page number
+- `status` (optional): Filter by status (pending, confirmed, shipped, delivered)
+
+**Response:**
+```json
+{
+  "orders": [
+    {
+      "id": 1,
+      "order_number": "ORD-001",
+      "total": 4999,
+      "status": "delivered",
+      "created_at": "2026-06-28",
+      "items": [
+        {
+          "product_id": 1,
+          "quantity": 1,
+          "price": 4999
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Get Order Details
+
+**Endpoint:** `GET /orders/:id`
+
+**Headers:** Requires authentication
+
+**Response:**
+```json
+{
+  "order": {
+    "id": 1,
+    "order_number": "ORD-001",
+    "total": 4999,
+    "status": "delivered",
+    "shipping_address": {...},
+    "items": [...],
+    "payment_method": "razorpay",
+    "tracking_number": "TRK123456",
+    "created_at": "2026-06-28"
+  }
+}
+```
+
+### Create Order
+
+**Endpoint:** `POST /orders`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "items": [
+    {
+      "product_id": 1,
+      "quantity": 1,
+      "price": 4999
+    }
+  ],
+  "address_id": 1,
+  "shipping_method": "express",
+  "payment_method": "razorpay"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "order": {
+    "id": 1,
+    "order_number": "ORD-001",
+    "total": 4999
+  }
+}
+```
+
+---
+
+## Payments API
+
+### Create Razorpay Order
+
+**Endpoint:** `POST /payments/create-order`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "order_id": 1,
+  "amount": 4999,
+  "currency": "INR"
+}
+```
+
+**Response:**
+```json
+{
+  "razorpay_order_id": "order_123456",
+  "amount": 499900,
+  "currency": "INR"
+}
+```
+
+### Verify Payment
+
+**Endpoint:** `POST /payments/verify`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "razorpay_order_id": "order_123456",
+  "razorpay_payment_id": "pay_123456",
+  "razorpay_signature": "signature"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Payment verified successfully"
+}
+```
+
+### Webhook Handler
+
+**Endpoint:** `POST /payments/webhook`
+
+**Headers:**
+- `X-Razorpay-Signature`: Razorpay signature
+
+**Events:**
+- `payment.authorized`
+- `payment.failed`
+- `refund.created`
+
+---
+
+## Addresses API
+
+### Get User Addresses
+
+**Endpoint:** `GET /addresses`
+
+**Headers:** Requires authentication
+
+**Response:**
+```json
+{
+  "addresses": [
+    {
+      "id": 1,
+      "name": "Home",
+      "phone": "+91 98765 43210",
+      "address": "123 Main Street",
+      "city": "New Delhi",
+      "state": "Delhi",
+      "pincode": "110001",
+      "is_default": true
+    }
+  ]
+}
+```
+
+### Create Address
+
+**Endpoint:** `POST /addresses`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "name": "Home",
+  "phone": "+91 98765 43210",
+  "address": "123 Main Street",
+  "city": "New Delhi",
+  "state": "Delhi",
+  "pincode": "110001"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "address": {...}
+}
+```
+
+### Update Address
+
+**Endpoint:** `PUT /addresses/:id`
+
+**Headers:** Requires authentication
+
+**Request Body:** Same as create
+
+**Response:**
+```json
+{
+  "success": true,
+  "address": {...}
+}
+```
+
+### Delete Address
+
+**Endpoint:** `DELETE /addresses/:id`
+
+**Headers:** Requires authentication
+
+**Response:**
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Vendors API
+
+### List Vendors
+
+**Endpoint:** `GET /vendors`
+
+**Query Parameters:**
+- `page` (optional): Page number
+- `category` (optional): Filter by category
+
+**Response:**
+```json
+{
+  "vendors": [
+    {
+      "id": 1,
+      "store_name": "Tech Store",
+      "description": "Premium electronics",
+      "rating": 4.8,
+      "reviews_count": 156,
+      "is_approved": true
+    }
+  ]
+}
+```
+
+### Get Vendor Details
+
+**Endpoint:** `GET /vendors/:id`
+
+**Response:**
+```json
+{
+  "vendor": {
+    "id": 1,
+    "store_name": "Tech Store",
+    "description": "Premium electronics",
+    "rating": 4.8,
+    "reviews_count": 156
+  },
+  "products": [...]
+}
+```
+
+### Register as Vendor
+
+**Endpoint:** `POST /vendors/register`
+
+**Headers:** Requires authentication
+
+**Request Body:**
+```json
+{
+  "store_name": "My Store",
+  "description": "Store description",
+  "category": "Electronics"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "vendor": {
+    "id": 1,
+    "store_name": "My Store",
+    "is_approved": false
+  }
+}
+```
+
+---
+
+## Admin API
+
+### Get Analytics
+
+**Endpoint:** `GET /admin/analytics`
+
+**Headers:** Requires admin authentication
+
+**Response:**
+```json
+{
+  "revenue": 4567890,
+  "orders": 2345,
+  "users": 12456,
+  "vendors": 156
+}
+```
+
+### Get All Vendors
+
+**Endpoint:** `GET /admin/vendors`
+
+**Headers:** Requires admin authentication
+
+**Response:**
+```json
+{
+  "vendors": [...]
+}
+```
+
+### Approve Vendor
+
+**Endpoint:** `PUT /admin/vendors/:id/approve`
+
+**Headers:** Requires admin authentication
+
+**Response:**
+```json
+{
+  "success": true,
+  "vendor": {...}
+}
+```
+
+### Get All Orders
+
+**Endpoint:** `GET /admin/orders`
+
+**Headers:** Requires admin authentication
+
+**Response:**
+```json
+{
+  "orders": [...]
+}
+```
+
+### Update Order Status
+
+**Endpoint:** `PUT /admin/orders/:id/status`
+
+**Headers:** Requires admin authentication
+
+**Request Body:**
+```json
+{
+  "status": "shipped"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "order": {...}
+}
+```
+
+---
+
+## Error Handling
+
+### Error Response Format
+
+```json
+{
+  "error": "Error message",
+  "code": "ERROR_CODE"
+}
+```
+
+### Common Error Codes
+
+- `UNAUTHORIZED` - Missing or invalid authentication token
 - `FORBIDDEN` - User doesn't have permission
 - `NOT_FOUND` - Resource not found
-- `CONFLICT` - Resource already exists
-- `INTERNAL_ERROR` - Server error
+- `VALIDATION_ERROR` - Invalid request data
+- `SERVER_ERROR` - Internal server error
 
 ---
 
 ## Rate Limiting
+
 - 100 requests per minute per IP
-- 1000 requests per hour per user
+- 1000 requests per hour per authenticated user
 
 ---
 
 ## Pagination
-List endpoints support pagination:
-- `page` (default: 1)
-- `limit` (default: 20, max: 100)
 
-Response includes:
+All list endpoints support pagination:
+
+**Query Parameters:**
+- `page`: Page number (default: 1)
+- `limit`: Items per page (default: 20, max: 100)
+
+**Response:**
 ```json
 {
   "data": [...],
@@ -204,89 +713,80 @@ Response includes:
 
 ---
 
-## Sorting
-Supported sort fields:
-- `created_at` - Creation date
-- `price` - Product price
-- `rating` - Product rating
-- `name` - Name/Title
+## Filtering & Sorting
 
-Sort order: `asc` or `desc`
+### Filtering
 
-Example: `?sort=price&order=asc`
+Use query parameters to filter:
+```
+GET /products?category=1&min_price=100&max_price=1000
+```
 
----
+### Sorting
 
-## Filtering
-Supported filters:
-- `category` - Category ID
-- `minPrice` - Minimum price
-- `maxPrice` - Maximum price
-- `search` - Search query
-- `status` - Order/Vendor status
-- `vendor_id` - Vendor ID
+Use `sort` parameter:
+```
+GET /products?sort=price_asc
+```
 
-Example: `?category=123&minPrice=100&maxPrice=5000`
+Available sorts:
+- `newest` - Newest first
+- `price_asc` - Price low to high
+- `price_desc` - Price high to low
+- `rating` - Highest rated first
+- `popular` - Most popular first
 
 ---
 
 ## Examples
 
-### Get Products with Filters
+### Example: Complete Purchase Flow
+
+1. **Register/Login**
 ```bash
-curl "http://localhost:3000/api/products?category=electronics&minPrice=1000&maxPrice=50000&sort=price&order=asc&page=1&limit=20"
+curl -X POST https://akart.vercel.app/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com", "password": "password123"}'
 ```
 
-### Create Order
+2. **Get Products**
 ```bash
-curl -X POST http://localhost:3000/api/orders \
+curl https://akart.vercel.app/api/products?category=1&sort=price_asc
+```
+
+3. **Create Order**
+```bash
+curl -X POST https://akart.vercel.app/api/orders \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "items": [
-      { "product_id": "123", "quantity": 2 },
-      { "product_id": "456", "quantity": 1 }
-    ],
-    "address_id": "addr-123",
-    "shipping_method": "standard",
+    "items": [{"product_id": 1, "quantity": 1, "price": 4999}],
+    "address_id": 1,
+    "shipping_method": "express",
     "payment_method": "razorpay"
   }'
 ```
 
-### Verify Payment
+4. **Create Razorpay Order**
 ```bash
-curl -X POST http://localhost:3000/api/payments/verify \
+curl -X POST https://akart.vercel.app/api/payments/create-order \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{"order_id": 1, "amount": 4999, "currency": "INR"}'
+```
+
+5. **Verify Payment**
+```bash
+curl -X POST https://akart.vercel.app/api/payments/verify \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "razorpay_order_id": "order_123",
-    "razorpay_payment_id": "pay_123",
-    "razorpay_signature": "signature_123"
+    "razorpay_order_id": "order_123456",
+    "razorpay_payment_id": "pay_123456",
+    "razorpay_signature": "signature"
   }'
 ```
 
 ---
 
-## Webhooks
-
-### Razorpay Payment Webhook
-Endpoint: `POST /api/payments/webhook`
-
-Events:
-- `payment.authorized` - Payment successful
-- `payment.failed` - Payment failed
-- `payment.captured` - Payment captured
-
----
-
-## Environment Variables
-- `SUPABASE_URL` - Supabase project URL
-- `SUPABASE_KEY` - Supabase anon key
-- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
-- `RAZORPAY_KEY_ID` - Razorpay key ID
-- `RAZORPAY_KEY_SECRET` - Razorpay key secret
-- `JWT_SECRET` - JWT signing secret
-
----
-
-## Support
-For API support, contact: api@akart.com
+**Last Updated:** 2026-06-28
