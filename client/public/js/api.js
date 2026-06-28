@@ -1,24 +1,13 @@
-/**
- * API Utilities - Handle all API requests
- */
+// API Client
+const API = {
+  baseURL: '/api',
+  timeout: 30000,
 
-import { authManager } from './auth.js';
-
-export class API {
-  constructor(baseURL = '/api') {
-    this.baseURL = baseURL;
-    this.timeout = 30000;
-  }
-
-  /**
-   * Make API request
-   */
   async request(endpoint, options = {}) {
     const {
       method = 'GET',
       body = null,
       headers = {},
-      timeout = this.timeout,
     } = options;
 
     const url = `${this.baseURL}${endpoint}`;
@@ -26,7 +15,6 @@ export class API {
       method,
       headers: {
         'Content-Type': 'application/json',
-        ...authManager.getAuthHeader(),
         ...headers,
       },
     };
@@ -36,15 +24,7 @@ export class API {
     }
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-      const response = await fetch(url, {
-        ...config,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await fetch(url, config);
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
@@ -56,43 +36,27 @@ export class API {
       console.error(`API Error [${method} ${endpoint}]:`, error);
       throw error;
     }
-  }
+  },
 
-  /**
-   * GET request
-   */
   get(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'GET' });
-  }
+  },
 
-  /**
-   * POST request
-   */
   post(endpoint, body, options = {}) {
     return this.request(endpoint, { ...options, method: 'POST', body });
-  }
+  },
 
-  /**
-   * PUT request
-   */
   put(endpoint, body, options = {}) {
     return this.request(endpoint, { ...options, method: 'PUT', body });
-  }
+  },
 
-  /**
-   * PATCH request
-   */
   patch(endpoint, body, options = {}) {
     return this.request(endpoint, { ...options, method: 'PATCH', body });
-  }
+  },
 
-  /**
-   * DELETE request
-   */
   delete(endpoint, options = {}) {
     return this.request(endpoint, { ...options, method: 'DELETE' });
-  }
-}
+  },
+};
 
-// Export singleton instance
-export const api = new API();
+window.API = API;

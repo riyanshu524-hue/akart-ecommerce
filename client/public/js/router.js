@@ -1,120 +1,111 @@
-import HomePage from '../pages/HomePage.js';
-import ProductsPage from '../pages/ProductsPage.js';
-import ProductDetailPage from '../pages/ProductDetailPage.js';
-import CartPage from '../pages/CartPage.js';
-import CheckoutPage from '../pages/CheckoutPage.js';
-import WishlistPage from '../pages/WishlistPage.js';
-import ProfilePage from '../pages/ProfilePage.js';
-import OrdersPage from '../pages/OrdersPage.js';
-import OrderConfirmationPage from '../pages/OrderConfirmationPage.js';
-import VendorPortalPage from '../pages/VendorPortalPage.js';
-import AdminDashboardPage from '../pages/AdminDashboardPage.js';
-import SetupWizardPage from '../pages/SetupWizardPage.js';
-import TermsPage from '../pages/TermsPage.js';
-import PrivacyPage from '../pages/PrivacyPage.js';
-import ReturnRefundPolicyPage from '../pages/ReturnRefundPolicyPage.js';
-import ShippingPolicyPage from '../pages/ShippingPolicyPage.js';
-import SettingsPage from '../pages/SettingsPage.js';
-import AddressBookPage from '../pages/AddressBookPage.js';
-import PaymentMethodsPage from '../pages/PaymentMethodsPage.js';
-import VendorPage from '../pages/VendorPage.js';
-import LoginPage from '../pages/LoginPage.js';
-import RegisterPage from '../pages/RegisterPage.js';
-import NotFound from '../pages/NotFound.js';
-
-const routes = {
-  '/': HomePage,
-  '/login': LoginPage,
-  '/register': RegisterPage,
-  '/products': ProductsPage,
-  '/product/:id': ProductDetailPage,
-  '/cart': CartPage,
-  '/checkout': CheckoutPage,
-  '/wishlist': WishlistPage,
-  '/profile': ProfilePage,
-  '/orders': OrdersPage,
-  '/order-confirmation/:id': OrderConfirmationPage,
-  '/vendor-portal': VendorPortalPage,
-  '/admin': AdminDashboardPage,
-  '/setup': SetupWizardPage,
-  '/terms': TermsPage,
-  '/privacy': PrivacyPage,
-  '/return-policy': ReturnRefundPolicyPage,
-  '/shipping-policy': ShippingPolicyPage,
-  '/settings': SettingsPage,
-  '/addresses': AddressBookPage,
-  '/payment-methods': PaymentMethodsPage,
-  '/vendor/:id': VendorPage,
-};
-
-function getRoute(path) {
-  for (const [pattern, component] of Object.entries(routes)) {
-    const regex = pattern
-      .replace(/\//g, '\\/')
-      .replace(/:(\w+)/g, '(?<$1>[^\\/]+)');
-    
-    const match = new RegExp(`^${regex}$`).exec(path);
-    if (match) {
-      return { component, params: match.groups || {} };
-    }
-  }
-  
-  return { component: NotFound, params: {} };
-}
-
-export class Router {
-  constructor() {
-    this.currentPage = null;
-    this.appContainer = document.getElementById('app');
-  }
+// Router
+const Router = {
+  routes: {
+    '/': 'home',
+    '/login': 'login',
+    '/register': 'register',
+    '/products': 'products',
+    '/cart': 'cart',
+    '/checkout': 'checkout',
+    '/terms': 'terms',
+    '/privacy': 'privacy',
+    '/shipping-policy': 'shipping',
+    '/return-policy': 'returns',
+  },
 
   init() {
-    window.addEventListener('popstate', () => {
-      this.navigate(window.location.pathname);
-    });
-
+    window.addEventListener('popstate', () => this.render());
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a');
       if (link && link.href.startsWith('/') && !link.href.includes('://')) {
         e.preventDefault();
-        this.navigate(link.href);
+        this.navigate(link.pathname);
       }
     });
-  }
+    this.render();
+  },
 
-  async navigate(path) {
+  navigate(path) {
+    window.history.pushState({}, '', path);
+    this.render();
+  },
+
+  async render() {
+    const path = window.location.pathname;
+    const page = this.routes[path] || 'notFound';
+    const app = document.getElementById('app');
+
     try {
-      const { component, params } = getRoute(path);
-      
-      const page = new component(params);
-      const html = await page.render();
-      this.appContainer.innerHTML = html;
-      
-      if (page.init) {
-        await page.init();
-      }
-      
-      if (window.location.pathname !== path) {
-        window.history.pushState({}, '', path);
-      }
-      
-      document.title = page.title || 'Akart';
-      window.scrollTo(0, 0);
-      
-      this.currentPage = page;
-    } catch (error) {
-      console.error('Navigation error:', error);
-      this.appContainer.innerHTML = `
-        <div class="container mt-8">
-          <div class="card">
-            <h1>Error Loading Page</h1>
-            <p>${error.message}</p>
-            <button class="btn btn-primary" onclick="window.location.href='/'">Go Home</button>
+      if (page === 'home') {
+        app.innerHTML = Pages.home();
+        loadHome();
+      } else if (page === 'login') {
+        app.innerHTML = Pages.login();
+      } else if (page === 'register') {
+        app.innerHTML = Pages.register();
+      } else if (page === 'products') {
+        app.innerHTML = Pages.products();
+        loadProducts();
+      } else if (page === 'cart') {
+        app.innerHTML = Pages.cart();
+        loadCart();
+      } else if (page === 'checkout') {
+        app.innerHTML = Pages.checkout();
+        loadCheckout();
+      } else if (page === 'terms') {
+        app.innerHTML = Pages.createNavbar() + `
+          ${Pages.createHeader('Terms & Conditions')}
+          <div class="container mb-8">
+            <div class="card">
+              <h2>Terms & Conditions</h2>
+              <p>Welcome to Akart. These terms and conditions govern your use of our platform...</p>
+            </div>
           </div>
-        </div>
-      `;
-    }
-  }
-}
+          ${Pages.createFooter()}
+        `;
+      } else if (page === 'privacy') {
+        app.innerHTML = Pages.createNavbar() + `
+          ${Pages.createHeader('Privacy Policy')}
+          <div class="container mb-8">
+            <div class="card">
+              <h2>Privacy Policy</h2>
+              <p>Your privacy is important to us. This policy explains how we collect and use your data...</p>
+            </div>
+          </div>
+          ${Pages.createFooter()}
+        `;
+      } else if (page === 'shipping') {
+        app.innerHTML = Pages.createNavbar() + `
+          ${Pages.createHeader('Shipping Policy')}
+          <div class="container mb-8">
+            <div class="card">
+              <h2>Shipping Policy</h2>
+              <p>We offer fast and reliable shipping across India...</p>
+            </div>
+          </div>
+          ${Pages.createFooter()}
+        `;
+      } else if (page === 'returns') {
+        app.innerHTML = Pages.createNavbar() + `
+          ${Pages.createHeader('Return & Refund Policy')}
+          <div class="container mb-8">
+            <div class="card">
+              <h2>Return & Refund Policy</h2>
+              <p>We want you to be completely satisfied with your purchase...</p>
+            </div>
+          </div>
+          ${Pages.createFooter()}
+        `;
+      } else {
+        app.innerHTML = Pages.notFound();
+      }
 
-export default routes;
+      window.scrollTo(0, 0);
+    } catch (error) {
+      console.error('Render error:', error);
+      app.innerHTML = `<div class="container mt-8"><div class="card"><h1>Error</h1><p>${error.message}</p></div></div>`;
+    }
+  },
+};
+
+window.Router = Router;
