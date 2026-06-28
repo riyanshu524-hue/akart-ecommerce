@@ -298,3 +298,70 @@ window.addEventListener('DOMContentLoaded', () => {
 if (document.readyState !== 'loading') {
   Router.init();
 }
+
+function addToWishlist(productId) {
+  if (!Auth.isAuthenticated) {
+    Utils.showToast('Please login to add to wishlist', 'warning');
+    Utils.navigate('/login');
+    return;
+  }
+  let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  if (!wishlist.includes(productId)) {
+    wishlist.push(productId);
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    Utils.showToast('Added to wishlist!', 'success');
+  } else {
+    Utils.showToast('Already in wishlist', 'info');
+  }
+}
+
+function loadWishlist() {
+  const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+  const wishlistGrid = document.getElementById('wishlistGrid');
+  
+  if (wishlist.length === 0) {
+    wishlistGrid.innerHTML = '<p>Your wishlist is empty. <a href="/products" style="color: var(--brand-primary);">Continue shopping</a></p>';
+    return;
+  }
+
+  wishlistGrid.innerHTML = wishlist.map(id => `
+    <div class="card" style="cursor: pointer;" onclick="Utils.navigate('/product/${id}')">
+      <div style="background: var(--bg-secondary); height: 200px; border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: 3rem;">📦</span>
+      </div>
+      <h4>Product ${id}</h4>
+      <p style="color: var(--text-muted); margin: 0.5rem 0;">₹999</p>
+      <button class="btn btn-sm btn-primary" onclick="addToCart(${id}); event.stopPropagation();">Add to Cart</button>
+    </div>
+  `).join('');
+}
+
+function loadOrders() {
+  const ordersContainer = document.getElementById('ordersContainer');
+  if (!ordersContainer) return;
+  
+  ordersContainer.innerHTML = `
+    <div class="card mb-4">
+      <div class="flex-between mb-3">
+        <div>
+          <h4>Order #ORD-001</h4>
+          <p style="color: var(--text-muted);">Placed on June 28, 2026</p>
+        </div>
+        <span style="background: var(--success); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">Delivered</span>
+      </div>
+      <p style="margin: 0.5rem 0;">Total: <strong>₹50,000</strong></p>
+      <button class="btn btn-sm btn-outline">View Details</button>
+    </div>
+    <div class="card mb-4">
+      <div class="flex-between mb-3">
+        <div>
+          <h4>Order #ORD-002</h4>
+          <p style="color: var(--text-muted);">Placed on June 25, 2026</p>
+        </div>
+        <span style="background: var(--warning); color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">In Transit</span>
+      </div>
+      <p style="margin: 0.5rem 0;">Total: <strong>₹25,000</strong></p>
+      <button class="btn btn-sm btn-outline">Track Order</button>
+    </div>
+  `;
+}

@@ -342,3 +342,389 @@ const Pages = {
 };
 
 window.Pages = Pages;
+
+  productDetail(productId) {
+    return `
+      ${this.createNavbar()}
+      
+      <div class="container mb-8" style="margin-top: 2rem;">
+        <div class="grid-2 gap-4">
+          <!-- Image Gallery -->
+          <div>
+            <div class="card" style="background: var(--bg-secondary); height: 400px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+              <div style="font-size: 5rem;">📦</div>
+            </div>
+            <div class="grid-4 gap-2">
+              <div class="card" style="background: var(--bg-secondary); height: 80px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 2rem;">📦</span>
+              </div>
+              <div class="card" style="background: var(--bg-secondary); height: 80px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 2rem;">📦</span>
+              </div>
+              <div class="card" style="background: var(--bg-secondary); height: 80px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 2rem;">📦</span>
+              </div>
+              <div class="card" style="background: var(--bg-secondary); height: 80px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <span style="font-size: 2rem;">📦</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Details -->
+          <div>
+            <h1 id="productName">Product Name</h1>
+            <div class="mb-3">
+              <span style="font-size: 1.2rem;">⭐⭐⭐⭐⭐ (245 reviews)</span>
+              <p style="color: var(--text-muted); margin-top: 0.5rem;">In Stock</p>
+            </div>
+
+            <div class="card mb-4">
+              <h2 id="productPrice" style="color: var(--brand-primary); font-size: 2rem;">₹999</h2>
+              <p style="color: var(--text-muted); text-decoration: line-through;">₹1,299</p>
+              <p style="color: var(--success); font-weight: bold;">Save 23%</p>
+            </div>
+
+            <div class="card mb-4">
+              <h3 class="mb-3">Select Variant</h3>
+              <div class="mb-3">
+                <label class="label">Size</label>
+                <div class="flex-center gap-2">
+                  <button class="btn btn-outline">S</button>
+                  <button class="btn btn-outline">M</button>
+                  <button class="btn btn-primary">L</button>
+                  <button class="btn btn-outline">XL</button>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="label">Color</label>
+                <div class="flex-center gap-2">
+                  <button class="btn btn-outline" style="background: #000; color: white;">Black</button>
+                  <button class="btn btn-primary" style="background: #fff; color: #000; border: 2px solid var(--brand-primary);">White</button>
+                  <button class="btn btn-outline" style="background: #0066cc; color: white;">Blue</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-4">
+              <h3 class="mb-3">Quantity</h3>
+              <div class="flex-center gap-2" style="width: fit-content;">
+                <button class="btn btn-outline">−</button>
+                <input type="number" class="input" value="1" style="width: 60px; text-align: center;">
+                <button class="btn btn-outline">+</button>
+              </div>
+            </div>
+
+            <div class="grid-2 gap-2 mb-4">
+              <button class="btn btn-lg btn-outline" onclick="addToWishlist(${productId})">❤️ Wishlist</button>
+              <button class="btn btn-lg btn-primary" onclick="addToCart(${productId}); Utils.showToast('Added to cart!'); setTimeout(() => Utils.navigate('/cart'), 1000);">🛒 Add to Cart</button>
+            </div>
+
+            <div class="card">
+              <h3 class="mb-3">Seller Information</h3>
+              <div class="flex-between mb-3">
+                <div>
+                  <h4>TechHub Store</h4>
+                  <p style="color: var(--text-muted);">⭐ 4.8 (1,250 reviews)</p>
+                </div>
+                <button class="btn btn-sm">Visit Store</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description & Reviews -->
+        <div class="grid-3-1 gap-4 mt-8">
+          <div>
+            <div class="card mb-4">
+              <h3 class="mb-3">Product Description</h3>
+              <p>High-quality product with excellent features. Perfect for everyday use. Durable and long-lasting. Comes with 1-year warranty.</p>
+            </div>
+
+            <div class="card mb-4">
+              <h3 class="mb-3">Specifications</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                  <td style="padding: 0.5rem 0;">Brand</td>
+                  <td style="padding: 0.5rem 0;">TechBrand</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                  <td style="padding: 0.5rem 0;">Model</td>
+                  <td style="padding: 0.5rem 0;">TB-2024</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                  <td style="padding: 0.5rem 0;">Warranty</td>
+                  <td style="padding: 0.5rem 0;">1 Year</td>
+                </tr>
+                <tr>
+                  <td style="padding: 0.5rem 0;">Delivery</td>
+                  <td style="padding: 0.5rem 0;">2-3 Days</td>
+                </tr>
+              </table>
+            </div>
+
+            <div class="card">
+              <h3 class="mb-4">Customer Reviews</h3>
+              <div class="mb-4" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <div class="flex-between mb-2">
+                  <strong>Rahul Kumar</strong>
+                  <span>⭐⭐⭐⭐⭐</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Verified Purchase</p>
+                <p>Excellent product! Exactly as described. Fast delivery and great customer service.</p>
+              </div>
+              <div class="mb-4" style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <div class="flex-between mb-2">
+                  <strong>Priya Singh</strong>
+                  <span>⭐⭐⭐⭐</span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Verified Purchase</p>
+                <p>Good quality. Minor packaging issue but product is perfect.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Related Products -->
+          <div>
+            <div class="card">
+              <h3 class="mb-4">Related Products</h3>
+              <div class="flex-col gap-3">
+                <div class="card" style="padding: 1rem; cursor: pointer;">
+                  <div style="background: var(--bg-secondary); height: 100px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 2rem;">📦</span>
+                  </div>
+                  <h4 style="margin: 0.5rem 0;">Related Product 1</h4>
+                  <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0;">₹899</p>
+                  <button class="btn btn-sm btn-primary" onclick="addToCart(1)">Add</button>
+                </div>
+                <div class="card" style="padding: 1rem; cursor: pointer;">
+                  <div style="background: var(--bg-secondary); height: 100px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 2rem;">📦</span>
+                  </div>
+                  <h4 style="margin: 0.5rem 0;">Related Product 2</h4>
+                  <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0.5rem 0;">₹1,099</p>
+                  <button class="btn btn-sm btn-primary" onclick="addToCart(2)">Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+
+  wishlist() {
+    return `
+      ${this.createNavbar()}
+      ${this.createHeader('My Wishlist')}
+      
+      <div class="container mb-8">
+        <div class="grid-4" id="wishlistGrid">
+          <p>Your wishlist is empty. <a href="/products" style="color: var(--brand-primary);">Continue shopping</a></p>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+
+  profile() {
+    return `
+      ${this.createNavbar()}
+      ${this.createHeader('My Profile')}
+      
+      <div class="container mb-8">
+        <div class="grid-4-1">
+          <aside class="card" style="height: fit-content;">
+            <h3 class="mb-4">Menu</h3>
+            <ul style="list-style: none;">
+              <li class="mb-2"><a href="#profile" style="color: var(--brand-primary); text-decoration: none;">👤 Profile</a></li>
+              <li class="mb-2"><a href="#addresses" style="color: var(--text-muted); text-decoration: none;">📍 Addresses</a></li>
+              <li class="mb-2"><a href="#payments" style="color: var(--text-muted); text-decoration: none;">💳 Payment Methods</a></li>
+              <li class="mb-2"><a href="#settings" style="color: var(--text-muted); text-decoration: none;">⚙️ Settings</a></li>
+            </ul>
+          </aside>
+
+          <div>
+            <div class="card mb-4">
+              <h2 class="mb-4">Profile Information</h2>
+              <div class="mb-3">
+                <label class="label">Full Name</label>
+                <input type="text" class="input" value="John Doe">
+              </div>
+              <div class="mb-3">
+                <label class="label">Email Address</label>
+                <input type="email" class="input" value="john@example.com">
+              </div>
+              <div class="mb-3">
+                <label class="label">Phone Number</label>
+                <input type="tel" class="input" value="+91 9876543210">
+              </div>
+              <button class="btn btn-primary">Save Changes</button>
+            </div>
+
+            <div class="card">
+              <h3 class="mb-4">Change Password</h3>
+              <div class="mb-3">
+                <label class="label">Current Password</label>
+                <input type="password" class="input">
+              </div>
+              <div class="mb-3">
+                <label class="label">New Password</label>
+                <input type="password" class="input">
+              </div>
+              <div class="mb-3">
+                <label class="label">Confirm Password</label>
+                <input type="password" class="input">
+              </div>
+              <button class="btn btn-primary">Update Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+};
+
+  orders() {
+    return `
+      ${this.createNavbar()}
+      ${this.createHeader('My Orders')}
+      
+      <div class="container mb-8">
+        <div id="ordersContainer">
+          <p>Loading orders...</p>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+
+  vendor() {
+    return `
+      ${this.createNavbar()}
+      ${this.createHeader('Vendor Dashboard')}
+      
+      <div class="container mb-8">
+        <div class="grid-4 gap-4 mb-8">
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Total Sales</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">₹2,50,000</h2>
+            <p style="color: var(--success); margin: 0.5rem 0 0 0;">↑ 12% this month</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Total Orders</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">145</h2>
+            <p style="color: var(--success); margin: 0.5rem 0 0 0;">↑ 8 this week</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Pending Orders</h4>
+            <h2 style="color: var(--warning); margin: 0;">23</h2>
+            <p style="color: var(--warning); margin: 0.5rem 0 0 0;">Action needed</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Earnings</h4>
+            <h2 style="color: var(--success); margin: 0;">₹2,12,500</h2>
+            <p style="color: var(--text-muted); margin: 0.5rem 0 0 0;">After commission</p>
+          </div>
+        </div>
+
+        <div class="grid-2 gap-4">
+          <div class="card">
+            <h3 class="mb-4">Recent Orders</h3>
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+              <div class="flex-between mb-2">
+                <strong>ORD-001</strong>
+                <span style="background: var(--success); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem;">Shipped</span>
+              </div>
+              <p style="color: var(--text-muted); margin: 0;">₹5,000 • 2 items</p>
+            </div>
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem;">
+              <div class="flex-between mb-2">
+                <strong>ORD-002</strong>
+                <span style="background: var(--warning); color: white; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.8rem;">Processing</span>
+              </div>
+              <p style="color: var(--text-muted); margin: 0;">₹3,500 • 1 item</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 class="mb-4">Quick Actions</h3>
+            <button class="btn btn-block btn-primary mb-2">➕ Add Product</button>
+            <button class="btn btn-block btn-outline mb-2">📦 Manage Inventory</button>
+            <button class="btn btn-block btn-outline mb-2">📊 View Analytics</button>
+            <button class="btn btn-block btn-outline">⚙️ Settings</button>
+          </div>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+
+  admin() {
+    return `
+      ${this.createNavbar()}
+      ${this.createHeader('Admin Dashboard')}
+      
+      <div class="container mb-8">
+        <div class="grid-4 gap-4 mb-8">
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Total Revenue</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">₹25,00,000</h2>
+            <p style="color: var(--success); margin: 0.5rem 0 0 0;">↑ 15% this month</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Total Users</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">1,250</h2>
+            <p style="color: var(--success); margin: 0.5rem 0 0 0;">↑ 45 this week</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Active Vendors</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">87</h2>
+            <p style="color: var(--warning); margin: 0.5rem 0 0 0;">5 pending approval</p>
+          </div>
+          <div class="card">
+            <h4 style="color: var(--text-muted); margin: 0 0 0.5rem 0;">Total Orders</h4>
+            <h2 style="color: var(--brand-primary); margin: 0;">3,450</h2>
+            <p style="color: var(--success); margin: 0.5rem 0 0 0;">↑ 120 this week</p>
+          </div>
+        </div>
+
+        <div class="grid-2 gap-4">
+          <div class="card">
+            <h3 class="mb-4">Management</h3>
+            <button class="btn btn-block btn-outline mb-2">👥 Manage Users</button>
+            <button class="btn btn-block btn-outline mb-2">🏪 Manage Vendors</button>
+            <button class="btn btn-block btn-outline mb-2">📦 Manage Products</button>
+            <button class="btn btn-block btn-outline mb-2">📋 Manage Orders</button>
+            <button class="btn btn-block btn-outline mb-2">💰 Commission Settings</button>
+            <button class="btn btn-block btn-outline">⚙️ Store Settings</button>
+          </div>
+
+          <div class="card">
+            <h3 class="mb-4">Recent Activity</h3>
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+              <p style="margin: 0; font-size: 0.9rem;">New vendor registered: TechHub Store</p>
+              <p style="color: var(--text-muted); margin: 0.25rem 0 0 0; font-size: 0.8rem;">2 hours ago</p>
+            </div>
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+              <p style="margin: 0; font-size: 0.9rem;">Order #ORD-5000 completed</p>
+              <p style="color: var(--text-muted); margin: 0.25rem 0 0 0; font-size: 0.8rem;">5 hours ago</p>
+            </div>
+            <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+              <p style="margin: 0; font-size: 0.9rem;">New user registered: Rahul Kumar</p>
+              <p style="color: var(--text-muted); margin: 0.25rem 0 0 0; font-size: 0.8rem;">1 day ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ${this.createFooter()}
+    `;
+  },
+};
