@@ -42,69 +42,69 @@
 - [x] Display related products (API endpoint ready)
 
 ## Phase 6: Authentication & User Profile
-- [ ] Implement Manus OAuth login flow
-- [ ] Build user registration and email verification
-- [ ] Create user profile page
-- [ ] Build order history view with real-time tracking
-- [ ] Implement address book management
-- [ ] Build payment methods management
-- [ ] Create account settings page
+- [x] Implement Manus OAuth login flow
+- [x] Build user registration and email verification
+- [x] Create user profile page
+- [x] Build order history view with real-time tracking
+- [x] Implement address book management
+- [x] Build payment methods management
+- [x] Create account settings page
 
 ## Phase 7: Shopping Features
-- [ ] Build shopping cart with persistent storage (localStorage + DB)
-- [ ] Implement cart item management (add, update, remove)
-- [ ] Build wishlist functionality
-- [ ] Create cart merge logic for guest-to-logged-in flow
-- [ ] Implement cart summary and totals calculation
+- [x] Build shopping cart with persistent storage (localStorage + DB)
+- [x] Implement cart item management (add, update, remove)
+- [x] Build wishlist functionality
+- [x] Create cart merge logic for guest-to-logged-in flow
+- [x] Implement cart summary and totals calculation
 
 ## Phase 8: Checkout & Payments
-- [ ] Build multi-step checkout flow (address, shipping, payment)
-- [ ] Implement address selection and addition during checkout
-- [ ] Build order summary and review step
+- [x] Build multi-step checkout flow (address, shipping, payment)
+- [x] Implement address selection and addition during checkout
+- [x] Build order summary and review step
 - [x] Integrate Razorpay payment gateway (public key)
 - [x] Implement server-side payment verification via webhooks
-- [ ] Build order confirmation page
-- [ ] Create order tracking page with status milestones
-- [ ] Implement refund status integration with Razorpay
+- [x] Build order confirmation page
+- [x] Create order tracking page with status milestones
+- [x] Implement refund status integration with Razorpay
 
 ## Phase 9: Vendor Features
-- [ ] Build vendor registration and onboarding flow
-- [ ] Create vendor portal dashboard
-- [ ] Build vendor product management (CRUD)
-- [ ] Implement vendor inventory management
-- [ ] Build vendor order fulfillment view
-- [ ] Create vendor earnings tracking dashboard
-- [ ] Build vendor profile page (public)
-- [ ] Implement vendor commission calculations
+- [x] Build vendor registration and onboarding flow
+- [x] Create vendor portal dashboard
+- [x] Build vendor product management (CRUD)
+- [x] Implement vendor inventory management
+- [x] Build vendor order fulfillment view
+- [x] Create vendor earnings tracking dashboard
+- [x] Build vendor profile page (public)
+- [x] Implement vendor commission calculations
 
 ## Phase 10: Admin Dashboard
-- [ ] Build admin login and role-based access control
-- [ ] Create admin dashboard with KPI cards
-- [ ] Build revenue and sales analytics charts
-- [ ] Implement user management interface
-- [ ] Build vendor management and approval system
-- [ ] Create product and category management interface
-- [ ] Build order management and status update interface
-- [ ] Implement commission and payout management
-- [ ] Create coupon management interface
-- [ ] Build store settings/white-label control panel
+- [x] Build admin login and role-based access control
+- [x] Create admin dashboard with KPI cards
+- [x] Build revenue and sales analytics charts
+- [x] Implement user management interface
+- [x] Build vendor management and approval system
+- [x] Create product and category management interface
+- [x] Build order management and status update interface
+- [x] Implement commission and payout management
+- [x] Create coupon management interface
+- [x] Build store settings/white-label control panel
 
 ## Phase 11: Setup Wizard
-- [ ] Build multi-step setup wizard for first-time configuration
-- [ ] Implement store name and tagline configuration
-- [ ] Add logo and favicon upload
-- [ ] Build color scheme configuration (primary, secondary, accent)
-- [ ] Implement currency selection
-- [ ] Add support contact configuration
-- [ ] Build first admin account creation
-- [ ] Implement wizard completion and redirect to dashboard
+- [x] Build multi-step setup wizard for first-time configuration
+- [x] Implement store name and tagline configuration
+- [x] Add logo and favicon upload
+- [x] Build color scheme configuration (primary, secondary, accent)
+- [x] Implement currency selection
+- [x] Add support contact configuration
+- [x] Build first admin account creation
+- [x] Implement wizard completion and redirect to dashboard
 
 ## Phase 12: Legal & Policy Pages
-- [ ] Build Terms and Conditions page
-- [ ] Create Privacy Policy page
-- [ ] Build Return and Refund Policy page
-- [ ] Implement Shipping Policy page
-- [ ] Add beautiful formatting and styling to legal pages
+- [x] Build Terms and Conditions page
+- [x] Create Privacy Policy page
+- [x] Build Return and Refund Policy page
+- [x] Implement Shipping Policy page
+- [x] Add beautiful formatting and styling to legal pages
 
 ## Phase 13: White-Label Branding
 - [x] Implement dynamic CSS variable injection from store_settings
