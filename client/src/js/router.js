@@ -1,172 +1,127 @@
 /**
- * Router - Client-side routing without frameworks
+ * Client-side router for Akart
  */
 
-export class Router {
+import HomePage from '../pages/HomePage.js';
+import ProductsPage from '../pages/ProductsPage.js';
+import ProductDetailPage from '../pages/ProductDetailPage.js';
+import CartPage from '../pages/CartPage.js';
+import CheckoutPage from '../pages/CheckoutPage.js';
+import WishlistPage from '../pages/WishlistPage.js';
+import ProfilePage from '../pages/ProfilePage.js';
+import OrdersPage from '../pages/OrdersPage.js';
+import OrderConfirmationPage from '../pages/OrderConfirmationPage.js';
+import VendorPage from '../pages/VendorPage.js';
+import AdminPage from '../pages/AdminPage.js';
+import SetupWizardPage from '../pages/SetupWizardPage.js';
+import TermsPage from '../pages/TermsPage.js';
+import PrivacyPage from '../pages/PrivacyPage.js';
+import NotFound from '../pages/NotFound.js';
+
+class Router {
   constructor() {
-    this.routes = new Map();
-    this.currentRoute = null;
-    this.currentParams = {};
-    this.setupRoutes();
+    this.routes = {
+      '/': HomePage,
+      '/products': ProductsPage,
+      '/product/:id': ProductDetailPage,
+      '/cart': CartPage,
+      '/checkout': CheckoutPage,
+      '/wishlist': WishlistPage,
+      '/profile': ProfilePage,
+      '/orders': OrdersPage,
+      '/order-confirmation': OrderConfirmationPage,
+      '/vendor/:id': VendorPage,
+      '/admin': AdminPage,
+      '/setup': SetupWizardPage,
+      '/terms': TermsPage,
+      '/privacy': PrivacyPage,
+    };
+    this.currentPage = null;
   }
 
-  setupRoutes() {
-    // Define all routes
-    this.routes.set('/', { name: 'home', component: 'HomePage' });
-    this.routes.set('/products', { name: 'products', component: 'ProductsPage' });
-    this.routes.set('/product/:id', { name: 'product-detail', component: 'ProductDetailPage' });
-    this.routes.set('/cart', { name: 'cart', component: 'CartPage' });
-    this.routes.set('/checkout', { name: 'checkout', component: 'CheckoutPage' });
-    this.routes.set('/profile', { name: 'profile', component: 'ProfilePage' });
-    this.routes.set('/orders', { name: 'orders', component: 'OrdersPage' });
-    this.routes.set('/vendor', { name: 'vendor-dashboard', component: 'VendorDashboard' });
-    this.routes.set('/admin', { name: 'admin-dashboard', component: 'AdminDashboard' });
-    this.routes.set('/setup', { name: 'setup-wizard', component: 'SetupWizard' });
-    this.routes.set('/terms', { name: 'terms', component: 'TermsPage' });
-    this.routes.set('/privacy', { name: 'privacy', component: 'PrivacyPage' });
-    this.routes.set('/refund', { name: 'refund', component: 'RefundPage' });
-  }
-
-  init() {
-    // Handle browser back/forward
-    window.addEventListener('popstate', (e) => {
-      this.navigate(window.location.pathname, false);
-    });
-
-    // Handle link clicks
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="/"]');
-      if (link && !link.target) {
-        e.preventDefault();
-        this.navigate(link.href.replace(window.location.origin, ''));
-      }
-    });
-  }
-
-  async navigate(path, pushState = true) {
-    console.log(`🔗 Navigating to: ${path}`);
-
-    // Parse path and params
+  async navigate(path) {
     const route = this.matchRoute(path);
     if (!route) {
-      console.warn(`⚠️ Route not found: ${path}`);
-      this.show404();
+      this.renderPage(NotFound, {});
       return;
     }
 
-    // Update browser history
-    if (pushState) {
-      window.history.pushState({ path }, '', path);
-    }
-
-    this.currentRoute = route;
-    await this.renderPage(route);
+    const [PageClass, params] = route;
+    this.renderPage(PageClass, params);
   }
 
   matchRoute(path) {
-    // Exact match
-    if (this.routes.has(path)) {
-      return { ...this.routes.get(path), path };
-    }
+    const pathname = new URL(path, window.location.origin).pathname;
 
-    // Parameterized match
-    for (const [routePath, route] of this.routes) {
-      const params = this.matchParams(routePath, path);
-      if (params) {
-        this.currentParams = params;
-        return { ...route, path, params };
+    for (const [pattern, PageClass] of Object.entries(this.routes)) {
+      const regex = this.patternToRegex(pattern);
+      const match = pathname.match(regex);
+      if (match) {
+        const params = this.extractParams(pattern, pathname);
+        return [PageClass, params];
       }
     }
-
     return null;
   }
 
-  matchParams(pattern, path) {
-    const patternParts = pattern.split('/').filter(Boolean);
-    const pathParts = path.split('/').filter(Boolean);
+  patternToRegex(pattern) {
+    const regexPattern = pattern
+      .replace(/\//g, '\\/')
+      .replace(/:(\w+)/g, '([^/]+)');
+    return new RegExp(`^${regexPattern}$`);
+  }
 
-    if (patternParts.length !== pathParts.length) {
-      return null;
-    }
-
+  extractParams(pattern, pathname) {
     const params = {};
-    for (let i = 0; i < patternParts.length; i++) {
-      if (patternParts[i].startsWith(':')) {
-        const paramName = patternParts[i].substring(1);
-        params[paramName] = pathParts[i];
-      } else if (patternParts[i] !== pathParts[i]) {
-        return null;
+    const patternParts = pattern.split('/').filter(p => p);
+    const pathParts = pathname.split('/').filter(p => p);
+
+    patternParts.forEach((part, index) => {
+      if (part.startsWith(':')) {
+        const paramName = part.substring(1);
+        params[paramName] = pathParts[index];
       }
-    }
+    });
 
     return params;
   }
 
-  async renderPage(route) {
+  renderPage(PageClass, params) {
     const app = document.getElementById('app');
-    
-    try {
-      // Show loading state
-      app.innerHTML = '<div class="flex-center" style="min-height: 100vh;"><div class="spinner"></div></div>';
+    if (!app) return;
 
-      // Dynamic import page component
-      const module = await import(`../pages/${route.component}.js`);
-      const PageClass = module.default;
-      const page = new PageClass(route.params || {});
+    const page = new PageClass(params);
+    this.currentPage = page;
 
-      // Render page
-      const content = await page.render();
-      app.innerHTML = content;
-
-      // Call page init if exists
-      if (page.init) {
-        await page.init();
-      }
-
-      // Scroll to top
+    page.render().then(html => {
+      app.innerHTML = html;
+      page.init();
       window.scrollTo(0, 0);
-
-      console.log(`✓ Page rendered: ${route.name}`);
-    } catch (error) {
+    }).catch(error => {
       console.error('Error rendering page:', error);
-      app.innerHTML = `
-        <div class="container mt-8">
-          <div class="card">
-            <h1>Error Loading Page</h1>
-            <p>${error.message}</p>
-            <button class="btn btn-primary mt-4" onclick="history.back()">Go Back</button>
-          </div>
-        </div>
-      `;
-    }
+      app.innerHTML = '<div class="container"><p>Error loading page</p></div>';
+    });
   }
 
-  show404() {
-    const app = document.getElementById('app');
-    app.innerHTML = `
-      <div class="container mt-8">
-        <div class="card text-center">
-          <h1 style="font-size: 3rem; margin-bottom: 1rem;">404</h1>
-          <h2>Page Not Found</h2>
-          <p class="text-muted mt-4">The page you're looking for doesn't exist.</p>
-          <a href="/" class="btn btn-primary mt-6">Go Home</a>
-        </div>
-      </div>
-    `;
-  }
+  start() {
+    window.addEventListener('popstate', () => {
+      this.navigate(window.location.pathname);
+    });
 
-  push(path) {
-    this.navigate(path, true);
-  }
-
-  replace(path) {
-    this.navigate(path, false);
-  }
-
-  back() {
-    window.history.back();
+    // Handle initial load
+    this.navigate(window.location.pathname);
   }
 }
 
-// Export router instance
 export const router = new Router();
+
+// Override link clicks for SPA navigation
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a');
+  if (link && link.hostname === window.location.hostname && !link.target) {
+    e.preventDefault();
+    const path = link.getAttribute('href');
+    window.history.pushState({}, '', path);
+    router.navigate(path);
+  }
+});
