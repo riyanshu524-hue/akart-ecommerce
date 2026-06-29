@@ -273,22 +273,22 @@ const Pages = {
             <div>
               <h4 style="margin-bottom: 1rem;">About Akart</h4>
               <ul style="list-style: none; padding: 0;">
-                <li><a href="#/about" style="color: #666; text-decoration: none;">About Us</a></li>
-                <li><a href="#/careers" style="color: #666; text-decoration: none;">Careers</a></li>
+                <li><a href="#/about" style="color: #666; text-decoration: none; cursor: pointer;">About Us</a></li>
+                <li><a href="#/careers" style="color: #666; text-decoration: none; cursor: pointer;">Careers</a></li>
               </ul>
             </div>
             <div>
               <h4 style="margin-bottom: 1rem;">Customer Service</h4>
               <ul style="list-style: none; padding: 0;">
-                <li><a href="#/contact" style="color: #666; text-decoration: none;">Contact Us</a></li>
-                <li><a href="#/faq" style="color: #666; text-decoration: none;">FAQ</a></li>
+                <li><a href="#/contact" style="color: #666; text-decoration: none; cursor: pointer;">Contact Us</a></li>
+                <li><a href="#/faq" style="color: #666; text-decoration: none; cursor: pointer;">FAQ</a></li>
               </ul>
             </div>
             <div>
               <h4 style="margin-bottom: 1rem;">Legal</h4>
               <ul style="list-style: none; padding: 0;">
-                <li><a href="#/terms" style="color: #666; text-decoration: none;">Terms</a></li>
-                <li><a href="#/privacy" style="color: #666; text-decoration: none;">Privacy</a></li>
+                <li><a href="#/terms" style="color: #666; text-decoration: none; cursor: pointer;">Terms</a></li>
+                <li><a href="#/privacy" style="color: #666; text-decoration: none; cursor: pointer;">Privacy</a></li>
               </ul>
             </div>
           </div>
@@ -333,7 +333,7 @@ const Pages = {
           <input type="password" id="loginPassword" placeholder="Password" required style="padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem;">
           <button type="submit" class="btn btn-primary" style="cursor: pointer; padding: 0.75rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Login</button>
         </form>
-        <p style="text-align: center; margin-top: 1rem;">Don't have an account? <a href="#/register" style="color: #ff6b35; text-decoration: none;">Register here</a></p>
+        <p style="text-align: center; margin-top: 1rem;">Don't have an account? <a href="#/register" style="color: #ff6b35; text-decoration: none; cursor: pointer;">Register here</a></p>
       </div>
       ${this.createFooter()}
     `;
@@ -350,7 +350,7 @@ const Pages = {
           <input type="password" id="registerPassword" placeholder="Password" required style="padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem;">
           <button type="submit" class="btn btn-primary" style="cursor: pointer; padding: 0.75rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Register</button>
         </form>
-        <p style="text-align: center; margin-top: 1rem;">Already have an account? <a href="#/login" style="color: #ff6b35; text-decoration: none;">Login here</a></p>
+        <p style="text-align: center; margin-top: 1rem;">Already have an account? <a href="#/login" style="color: #ff6b35; text-decoration: none; cursor: pointer;">Login here</a></p>
       </div>
       ${this.createFooter()}
     `;
@@ -377,7 +377,7 @@ const Pages = {
     `;
 
     if (Cart.items.length === 0) {
-      cartHTML += `<p style="text-align: center; padding: 2rem;">Your cart is empty. <a href="#/products" style="color: #ff6b35;">Continue shopping</a></p>`;
+      cartHTML += `<p style="text-align: center; padding: 2rem;">Your cart is empty. <a href="#/products" style="color: #ff6b35; cursor: pointer;">Continue shopping</a></p>`;
     } else {
       cartHTML += `
         <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem;">
@@ -410,7 +410,7 @@ const Pages = {
           <h2 style="margin: 0;">Total: ${Utils.formatPrice(Cart.getTotal())}</h2>
         </div>
         <div style="text-align: right;">
-          <a href="#/products" class="btn btn-outline" style="margin-right: 1rem; padding: 0.75rem 1.5rem; border: 1px solid #e5e7eb; background: white; border-radius: 0.25rem; text-decoration: none; display: inline-block;">Continue Shopping</a>
+          <a href="#/products" class="btn btn-outline" style="margin-right: 1rem; padding: 0.75rem 1.5rem; border: 1px solid #e5e7eb; background: white; border-radius: 0.25rem; text-decoration: none; display: inline-block; cursor: pointer;">Continue Shopping</a>
           <button onclick="Utils.navigate('#/checkout')" class="btn btn-primary" style="cursor: pointer; padding: 0.75rem 1.5rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Proceed to Checkout</button>
         </div>
       `;
@@ -446,13 +446,82 @@ const Pages = {
     `;
   },
 
+  about() {
+    return `
+      ${this.createNavbar()}
+      <div style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <h1>About Akart</h1>
+        <p style="font-size: 1.1rem; line-height: 1.8;">Akart is a premium multi-vendor e-commerce platform connecting millions of buyers with trusted sellers. We're committed to providing the best shopping experience with fast delivery, secure payments, and exceptional customer service.</p>
+        <h2 style="margin-top: 2rem;">Our Mission</h2>
+        <p style="line-height: 1.8;">To revolutionize online shopping by empowering sellers and delighting customers with quality products and seamless transactions.</p>
+      </div>
+      ${this.createFooter()}
+    `;
+  },
+
+  contact() {
+    return `
+      ${this.createNavbar()}
+      <div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+        <h1>Contact Us</h1>
+        <form style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="text" placeholder="Your Name" required style="padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem;">
+          <input type="email" placeholder="Your Email" required style="padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem;">
+          <textarea placeholder="Your Message" rows="5" required style="padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem;"></textarea>
+          <button type="submit" class="btn btn-primary" style="cursor: pointer; padding: 0.75rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Send Message</button>
+        </form>
+      </div>
+      ${this.createFooter()}
+    `;
+  },
+
+  terms() {
+    return `
+      ${this.createNavbar()}
+      <div style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <h1>Terms and Conditions</h1>
+        <p style="line-height: 1.8;">Welcome to Akart. By accessing and using this website, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+        <h2 style="margin-top: 2rem;">1. Use License</h2>
+        <p style="line-height: 1.8;">Permission is granted to temporarily download one copy of the materials (information or software) on Akart for personal, non-commercial transitory viewing only.</p>
+        <h2 style="margin-top: 2rem;">2. Disclaimer</h2>
+        <p style="line-height: 1.8;">The materials on Akart are provided on an 'as is' basis. Akart makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+      </div>
+      ${this.createFooter()}
+    `;
+  },
+
+  privacy() {
+    return `
+      ${this.createNavbar()}
+      <div style="max-width: 1200px; margin: 2rem auto; padding: 0 1rem;">
+        <h1>Privacy Policy</h1>
+        <p style="line-height: 1.8;">Akart is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website.</p>
+        <h2 style="margin-top: 2rem;">1. Information We Collect</h2>
+        <p style="line-height: 1.8;">We may collect information about you in a variety of ways. The information we may collect on the Site includes:</p>
+        <ul style="line-height: 1.8;">
+          <li>Personal Data: Name, email address, phone number, shipping address</li>
+          <li>Financial Data: Financial information, such as data related to your payment method</li>
+          <li>Data From Social Networks: Your social network account information</li>
+        </ul>
+        <h2 style="margin-top: 2rem;">2. Use of Your Information</h2>
+        <p style="line-height: 1.8;">Having accurate information about you permits us to provide you with a smooth, efficient, and customized experience. Specifically, we may use information collected about you via the Site to:</p>
+        <ul style="line-height: 1.8;">
+          <li>Process your transactions and send related information</li>
+          <li>Email regarding your account or order</li>
+          <li>Fulfill and manage purchases, orders, payments, and other transactions related to the Site</li>
+        </ul>
+      </div>
+      ${this.createFooter()}
+    `;
+  },
+
   notFound() {
     return `
       ${this.createNavbar()}
       <div style="text-align: center; padding: 4rem 1rem;">
         <h1 style="font-size: 3rem; margin-bottom: 1rem;">404</h1>
         <p style="font-size: 1.2rem; margin-bottom: 2rem;">Page not found</p>
-        <a href="#/" class="btn btn-primary" style="text-decoration: none; padding: 0.75rem 1.5rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600; display: inline-block;">Go Home</a>
+        <a href="#/" class="btn btn-primary" style="text-decoration: none; padding: 0.75rem 1.5rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600; display: inline-block; cursor: pointer;">Go Home</a>
       </div>
       ${this.createFooter()}
     `;
@@ -470,9 +539,9 @@ async function handleLogin(event) {
   const success = await Auth.login(email, password);
   if (success) {
     Utils.showToast('Login successful!', 'success');
-    Utils.navigate('#/');
+    setTimeout(() => Utils.navigate('#/'), 1000);
   } else {
-    Utils.showToast('Login failed!', 'error');
+    Utils.showToast('Login failed! Check your credentials.', 'error');
   }
 }
 
@@ -485,7 +554,7 @@ async function handleRegister(event) {
   const success = await Auth.register(name, email, password);
   if (success) {
     Utils.showToast('Registration successful!', 'success');
-    Utils.navigate('#/');
+    setTimeout(() => Utils.navigate('#/'), 1000);
   } else {
     Utils.showToast('Registration failed!', 'error');
   }
@@ -537,7 +606,7 @@ async function handleCheckout(event) {
           if (order.success) {
             Cart.clear();
             Utils.showToast('Order placed successfully!', 'success');
-            Utils.navigate('#/orders');
+            Utils.navigate('#/');
           }
         }
       },
@@ -582,6 +651,18 @@ async function renderPage() {
         return;
       }
       content = Pages.checkout();
+      break;
+    case '/about':
+      content = Pages.about();
+      break;
+    case '/contact':
+      content = Pages.contact();
+      break;
+    case '/terms':
+      content = Pages.terms();
+      break;
+    case '/privacy':
+      content = Pages.privacy();
       break;
     default:
       content = Pages.notFound();
