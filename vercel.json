@@ -2,15 +2,6 @@
   "version": 2,
   "buildCommand": "pnpm build",
   "outputDirectory": "dist",
-  "env": {
-    "NODE_ENV": "production",
-    "DATABASE_URL": "@akart_database_url",
-    "SUPABASE_URL": "@akart_supabase_url",
-    "SUPABASE_KEY": "@akart_supabase_key",
-    "SUPABASE_SERVICE_ROLE_KEY": "@akart_supabase_service_role_key",
-    "RAZORPAY_KEY_ID": "@akart_razorpay_key_id",
-    "RAZORPAY_KEY_SECRET": "@akart_razorpay_key_secret"
-  },
   "functions": {
     "server/index.js": {
       "memory": 512,
