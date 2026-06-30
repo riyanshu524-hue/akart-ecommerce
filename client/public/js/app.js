@@ -421,26 +421,56 @@ const Pages = {
   },
 
   checkout() {
+    const subtotal = Cart.getTotal();
+    const shipping = 50;
+    const tax = Math.round(subtotal * 0.18);
+    const total = subtotal + shipping + tax;
+
     return `
       ${this.createNavbar()}
-      <div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
+      <div style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
         <h1 style="margin-bottom: 2rem;">Checkout</h1>
-        <form id="checkoutForm" onsubmit="handleCheckout(event)" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
           <div>
-            <h3>Shipping Address</h3>
-            <input type="text" id="fullName" placeholder="Full Name" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; margin-bottom: 0.5rem; box-sizing: border-box;">
-            <input type="email" id="email" placeholder="Email" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; margin-bottom: 0.5rem; box-sizing: border-box;">
-            <input type="text" id="phone" placeholder="Phone" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; margin-bottom: 0.5rem; box-sizing: border-box;">
-            <input type="text" id="address" placeholder="Address" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; margin-bottom: 0.5rem; box-sizing: border-box;">
-            <input type="text" id="city" placeholder="City" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; margin-bottom: 0.5rem; box-sizing: border-box;">
-            <input type="text" id="zipcode" placeholder="Zip Code" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+            <h3 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #ff6b35;">Step 1: Shipping Address</h3>
+            <form id="checkoutForm" onsubmit="handleCheckout(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+              <input type="text" id="fullName" placeholder="Full Name" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <input type="email" id="email" placeholder="Email" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <input type="text" id="phone" placeholder="Phone" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <input type="text" id="address" placeholder="Address" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <input type="text" id="city" placeholder="City" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <input type="text" id="zipcode" placeholder="Zip Code" required style="width: 100%; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.25rem; box-sizing: border-box;">
+              <button type="submit" class="btn btn-primary" style="cursor: pointer; padding: 1rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600; font-size: 1rem;">Continue to Payment →</button>
+            </form>
           </div>
-          <div>
-            <h3>Order Summary</h3>
-            <p>Total: <strong>${Utils.formatPrice(Cart.getTotal())}</strong></p>
+          <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.5rem; height: fit-content;">
+            <h3 style="margin-top: 0;">Order Summary</h3>
+            <div style="border-bottom: 1px solid #e5e7eb; padding-bottom: 1rem; margin-bottom: 1rem;">
+              ${Cart.items.map(item => `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                  <span>${item.name} x${item.quantity}</span>
+                  <span>${Utils.formatPrice(item.price * item.quantity)}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span>Subtotal:</span>
+              <span>${Utils.formatPrice(subtotal)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+              <span>Shipping:</span>
+              <span>${Utils.formatPrice(shipping)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e5e7eb;">
+              <span>Tax (18%):</span>
+              <span>${Utils.formatPrice(tax)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; color: #ff6b35;">
+              <span>Total:</span>
+              <span>${Utils.formatPrice(total)}</span>
+            </div>
           </div>
-          <button type="submit" class="btn btn-primary" style="cursor: pointer; padding: 1rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Proceed to Payment</button>
-        </form>
+        </div>
       </div>
       ${this.createFooter()}
     `;
@@ -569,10 +599,18 @@ async function handleCheckout(event) {
     return;
   }
 
+  const subtotal = Cart.getTotal();
+  const shipping = 50;
+  const tax = Math.round(subtotal * 0.18);
+  const total = subtotal + shipping + tax;
+
   const orderData = {
     user_id: Auth.user.id,
     items: Cart.items,
-    total_amount: Cart.getTotal(),
+    subtotal_amount: subtotal,
+    shipping_amount: shipping,
+    tax_amount: tax,
+    total_amount: total,
     shipping_address: {
       name: document.getElementById('fullName').value,
       email: document.getElementById('email').value,
@@ -583,41 +621,73 @@ async function handleCheckout(event) {
     }
   };
 
-  const paymentOrder = await API.createPaymentOrder({
-    amount: Math.round(Cart.getTotal() * 100),
-    currency: 'INR'
-  });
+  try {
+    // Create Razorpay order
+    const paymentOrder = await API.createPaymentOrder({
+      amount: Math.round(total * 100), // Amount in paise
+      currency: 'INR',
+      receipt: 'order_' + Date.now()
+    });
 
-  if (paymentOrder.success) {
+    if (!paymentOrder.success) {
+      Utils.showToast('Failed to create payment order', 'error');
+      return;
+    }
+
+    // Razorpay payment options
     const options = {
-      key: 'rzp_test_T6hm4bnUhKQOnp',
-      amount: paymentOrder.amount,
-      currency: paymentOrder.currency,
+      key: 'rzp_test_T6hm4bnUhKQOnp', // Your Razorpay Key ID
+      amount: Math.round(total * 100), // Amount in paise
+      currency: 'INR',
+      name: 'Akart',
+      description: 'Order from Akart Marketplace',
       order_id: paymentOrder.id,
       handler: async function(response) {
-        const verified = await API.verifyPayment({
-          razorpay_payment_id: response.razorpay_payment_id,
-          razorpay_order_id: response.razorpay_order_id,
-          razorpay_signature: response.razorpay_signature
-        });
+        try {
+          // Verify payment signature
+          const verified = await API.verifyPayment({
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature
+          });
 
-        if (verified.success) {
-          const order = await API.createOrder(orderData);
-          if (order.success) {
-            Cart.clear();
-            Utils.showToast('Order placed successfully!', 'success');
-            Utils.navigate('#/');
+          if (verified.success) {
+            // Create order in database
+            const order = await API.createOrder(orderData);
+            if (order.success) {
+              Cart.clear();
+              Utils.showToast('✅ Payment successful! Order placed.', 'success');
+              setTimeout(() => Utils.navigate('#/'), 2000);
+            } else {
+              Utils.showToast('Payment verified but order creation failed', 'error');
+            }
+          } else {
+            Utils.showToast('❌ Payment verification failed', 'error');
           }
+        } catch (error) {
+          Utils.showToast('Payment verification error: ' + error.message, 'error');
         }
       },
       prefill: {
-        name: Auth.user.name,
-        email: Auth.user.email
+        name: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        contact: document.getElementById('phone').value
+      },
+      theme: {
+        color: '#ff6b35'
+      },
+      modal: {
+        ondismiss: function() {
+          Utils.showToast('Payment cancelled', 'error');
+        }
       }
     };
 
+    // Open Razorpay checkout
     const rzp = new Razorpay(options);
     rzp.open();
+  } catch (error) {
+    Utils.showToast('Checkout error: ' + error.message, 'error');
   }
 }
 
