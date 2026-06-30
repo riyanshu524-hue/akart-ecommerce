@@ -1,164 +1,67 @@
-/**
- * Product Routes - GET products, search, filter, etc.
- */
-
 import express from 'express';
-import { supabaseAdmin } from '../supabase.js';
+import productsData from '../products-data.js';
 
 const router = express.Router();
 
-/**
- * GET /api/products - Get all products with filtering and pagination
- */
-router.get('/', async (req, res) => {
+// Get all products
+router.get('/', (req, res) => {
   try {
-    const { 
-      page = 1, 
-      limit = 20, 
-      category, 
-      search, 
-      minPrice, 
-      maxPrice,
-      sort = 'created_at',
-      order = 'desc'
-    } = req.query;
+    const { category, search, sort, page = 1, limit = 12 } = req.query;
+    let filtered = [...productsData];
 
-    let query = supabaseAdmin
-      .from('products')
-      .select('*, product_images(*), vendor:vendors(store_name)', { count: 'exact' })
-      .eq('is_active', true);
-
-    // Apply filters
+    // Filter by category
     if (category) {
-      query = query.eq('category_id', category);
+      filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
     }
 
+    // Search
     if (search) {
-      query = query.ilike('name', `%${search}%`);
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(search.toLowerCase()) ||
+        p.description.toLowerCase().includes(search.toLowerCase())
+      );
     }
 
-    if (minPrice) {
-      query = query.gte('price', minPrice);
+    // Sort
+    if (sort === 'price-low') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sort === 'price-high') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sort === 'rating') {
+      filtered.sort((a, b) => b.rating - a.rating);
+    } else if (sort === 'newest') {
+      filtered.sort((a, b) => b.id - a.id);
     }
 
-    if (maxPrice) {
-      query = query.lte('price', maxPrice);
-    }
-
-    // Apply sorting
-    const validSortFields = ['created_at', 'price', 'rating', 'review_count'];
-    const sortField = validSortFields.includes(sort) ? sort : 'created_at';
-    const sortOrder = order === 'asc' ? false : true;
-
-    query = query.order(sortField, { ascending: !sortOrder });
-
-    // Apply pagination
-    const offset = (page - 1) * limit;
-    query = query.range(offset, offset + limit - 1);
-
-    const { data, count, error } = await query;
-
-    if (error) throw error;
+    // Pagination
+    const startIdx = (page - 1) * limit;
+    const paginatedProducts = filtered.slice(startIdx, startIdx + parseInt(limit));
 
     res.json({
-      products: data,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total: count,
-        pages: Math.ceil(count / limit),
-      },
+      success: true,
+      products: paginatedProducts,
+      total: filtered.length,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(filtered.length / limit)
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    res.status(500).json({ error: 'Failed to fetch products' });
+    console.error('Get products error:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch products' });
   }
 });
 
-/**
- * GET /api/products/:id - Get single product details
- */
-router.get('/:id', async (req, res) => {
+// Get single product
+router.get('/:id', (req, res) => {
   try {
-    const { id } = req.params;
-
-    const { data: product, error } = await supabaseAdmin
-      .from('products')
-      .select('*, product_images(*), product_variants(*), vendor:vendors(store_name, store_logo_url), reviews(*)')
-      .eq('id', id)
-      .single();
-
-    if (error || !product) {
-      return res.status(404).json({ error: 'Product not found' });
+    const product = productsData.find(p => p.id === parseInt(req.params.id));
+    if (!product) {
+      return res.status(404).json({ success: false, error: 'Product not found' });
     }
-
-    res.json(product);
+    res.json({ success: true, product });
   } catch (error) {
-    console.error('Error fetching product:', error);
-    res.status(500).json({ error: 'Failed to fetch product' });
-  }
-});
-
-/**
- * GET /api/products/:id/related - Get related products
- */
-router.get('/:id/related', async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Get the product to find its category
-    const { data: product, error: productError } = await supabaseAdmin
-      .from('products')
-      .select('category_id')
-      .eq('id', id)
-      .single();
-
-    if (productError || !product) {
-      return res.status(404).json({ error: 'Product not found' });
-    }
-
-    // Get related products from same category
-    const { data: relatedProducts, error } = await supabaseAdmin
-      .from('products')
-      .select('*, product_images(*)')
-      .eq('category_id', product.category_id)
-      .neq('id', id)
-      .eq('is_active', true)
-      .limit(6);
-
-    if (error) throw error;
-
-    res.json({ products: relatedProducts });
-  } catch (error) {
-    console.error('Error fetching related products:', error);
-    res.status(500).json({ error: 'Failed to fetch related products' });
-  }
-});
-
-/**
- * GET /api/products/search - Search products
- */
-router.get('/search/query', async (req, res) => {
-  try {
-    const { q, limit = 10 } = req.query;
-
-    if (!q || q.length < 2) {
-      return res.json({ products: [] });
-    }
-
-    const { data: products, error } = await supabaseAdmin
-      .from('products')
-      .select('id, name, price, product_images(*)')
-      .ilike('name', `%${q}%`)
-      .eq('is_active', true)
-      .limit(limit);
-
-    if (error) throw error;
-
-    res.json({ products });
-  } catch (error) {
-    console.error('Error searching products:', error);
-    res.status(500).json({ error: 'Failed to search products' });
+    console.error('Get product error:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch product' });
   }
 });
 
