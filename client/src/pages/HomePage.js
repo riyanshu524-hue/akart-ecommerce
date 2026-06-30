@@ -207,26 +207,3 @@ export default class HomePage extends BasePage {
       </div>
     `;
   }
-
-  getMockProducts() {
-    return [
-      { id: 1, name: 'Sony WH-1000XM5', category: 'Electronics', price: 29990, image: '/placeholder.jpg', rating: 5 },
-      { id: 2, name: 'Apple MacBook Air M2', category: 'Computers', price: 114900, image: '/placeholder.jpg', rating: 5 },
-      { id: 3, name: 'Nike Air Jordan 1', category: 'Footwear', price: 8295, image: '/placeholder.jpg', rating: 4 },
-      { id: 4, name: 'Dyson V15 Detect', category: 'Appliances', price: 65900, image: '/placeholder.jpg', rating: 5 },
-      { id: 5, name: 'Kindle Paperwhite', category: 'Books/Tech', price: 13999, image: '/placeholder.jpg', rating: 4 },
-      { id: 6, name: 'Samsung 55" TV', category: 'Electronics', price: 49999, image: '/placeholder.jpg', rating: 4 },
-      { id: 7, name: 'Adidas Ultraboost', category: 'Footwear', price: 12999, image: '/placeholder.jpg', rating: 4 },
-      { id: 8, name: 'Canon EOS R5', category: 'Electronics', price: 299999, image: '/placeholder.jpg', rating: 5 },
-    ];
-  }
-
-  getMockCategories() {
-    return [
-      { id: 1, name: 'Electronics', icon: '📱', count: 5000 },
-      { id: 2, name: 'Fashion', icon: '👕', count: 10000 },
-      { id: 3, name: 'Home & Kitchen', icon: '🏠', count: 8000 },
-      { id: 4, name: 'Books', icon: '📚', count: 3000 },
-    ];
-  }
-}
