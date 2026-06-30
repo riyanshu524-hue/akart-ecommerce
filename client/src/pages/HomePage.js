@@ -133,8 +133,7 @@ export default class HomePage extends BasePage {
 
   async init() {
     super.init();
-    
-    // Add event listeners
+
     document.querySelectorAll('button').forEach(btn => {
       if (btn.textContent.includes('Start Shopping')) {
         btn.addEventListener('click', () => window.location.href = '/products');
@@ -144,7 +143,6 @@ export default class HomePage extends BasePage {
       }
     });
 
-    // Add search functionality
     const searchInput = document.querySelector('input[type="search"]');
     if (searchInput) {
       searchInput.addEventListener('keypress', (e) => {
@@ -188,10 +186,15 @@ export default class HomePage extends BasePage {
   createProductCard(product) {
     const rating = product.rating || 4;
     const stars = '⭐'.repeat(Math.floor(rating));
-    
+
+    const image =
+      product.product_images?.find(img => img.is_primary)?.image_url ||
+      product.product_images?.[0]?.image_url ||
+      '/placeholder.jpg';
+
     return `
       <div class="card-product hover-lift">
-        <img src="${this.escapeHtml(product.image || '/placeholder.jpg')}" alt="${this.escapeHtml(product.name)}" class="card-product-image" style="object-fit: cover;">
+        <img src="${this.escapeHtml(image)}" alt="${this.escapeHtml(product.name)}" class="card-product-image" style="object-fit: cover;">
         <div class="card-product-body">
           <h4 style="margin-bottom: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${this.escapeHtml(product.name)}</h4>
           <p class="text-muted text-small" style="margin-bottom: 0.5rem;">${this.escapeHtml(product.category || 'Electronics')}</p>
