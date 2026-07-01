@@ -1,4 +1,4 @@
-name = "akart-ecommerce"
+name = "Akart"
 main = "src/index.js"
 compatibility_date = "2026-06-30"
 
