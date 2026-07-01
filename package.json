@@ -18,7 +18,8 @@
     "dotenv": "^17.2.2",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
-    "razorpay": "^2.9.2"
+    "razorpay": "^2.9.2",
+    "wrangler": "^4.106.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
