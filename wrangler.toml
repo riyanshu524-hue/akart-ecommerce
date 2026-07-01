@@ -1,5 +1,39 @@
 name = "akart-ecommerce"
-main = "server/index.js"
-type = "javascript"
-compatibility_date = "2024-01-01"
+main = "src/index.js"
+compatibility_date = "2026-06-30"
 
+<<<<<<< Updated upstream
+=======
+# Environment variables
+env.production.vars = { ENVIRONMENT = "production" }
+env.development.vars = { ENVIRONMENT = "development" }
+
+# Bindings for KV storage (optional)
+[[env.production.kv_namespaces]]
+binding = "CART_KV"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# Environment variables from .env file
+[env.production.vars]
+SUPABASE_URL = "https://lfxipnejkhkqnrbuqtwl.supabase.co"
+RAZORPAY_KEY_ID = "rzp_test_T6hm4bnUhKQOnp"
+
+[env.development.vars]
+SUPABASE_URL = "https://lfxipnejkhkqnrbuqtwl.supabase.co"
+RAZORPAY_KEY_ID = "rzp_test_T6hm4bnUhKQOnp"
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "."
+
+# Routes configuration
+[[routes]]
+pattern = "akart.workers.dev/*"
+zone_name = "workers.dev"
+
+# Triggers for cron jobs (optional)
+[[triggers.crons]]
+crons = ["0 0 * * *"]
+>>>>>>> Stashed changes

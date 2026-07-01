@@ -758,7 +758,7 @@ async function loadProducts() {
     if (container && data.products) {
       container.innerHTML = data.products.slice(0, 8).map(product => `
         <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; transition: transform 0.2s;">
-          <div style="background: #f3f4f6; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">📦</div>
+          <div style="background: #f3f4f6; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${product.image || '📦'}</div>
           <div style="padding: 1rem;">
             <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem;">${product.name}</h3>
             <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">${product.description?.substring(0, 50)}...</p>

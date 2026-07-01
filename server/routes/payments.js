@@ -19,55 +19,32 @@ const razorpay = new Razorpay({
  */
 router.post('/create-order', async (req, res) => {
   try {
-    const { orderId, amount, currency = 'INR' } = req.body;
+    const { amount, currency = 'INR', receipt } = req.body;
 
-    if (!orderId || !amount) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!amount) {
+      return res.status(400).json({ error: 'Missing amount' });
     }
 
-    // Verify order exists and belongs to user
-    const { data: order, error: orderError } = await supabaseAdmin
-      .from('orders')
-      .select('*')
-      .eq('id', orderId)
-      .single();
-
-    if (orderError || !order) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-
-    // Create Razorpay order
+    // Create Razorpay order directly
     const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(amount * 100), // Convert to paise
+      amount: Math.round(amount * 100),
       currency,
-      receipt: order.order_number,
+      receipt: receipt || 'order_' + Date.now(),
       notes: {
-        orderId: orderId,
+        timestamp: new Date().toISOString(),
       },
     });
 
-    // Save Razorpay order ID to database
-    const { error: updateError } = await supabaseAdmin
-      .from('payments')
-      .insert({
-        order_id: orderId,
-        razorpay_order_id: razorpayOrder.id,
-        amount,
-        currency,
-        status: 'pending',
-      });
-
-    if (updateError) throw updateError;
-
     res.json({
-      razorpayOrderId: razorpayOrder.id,
+      success: true,
+      id: razorpayOrder.id,
       amount,
       currency,
       keyId: process.env.RAZORPAY_KEY_ID,
     });
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
-    res.status(500).json({ error: 'Failed to create payment order' });
+    res.status(500).json({ success: false, error: 'Failed to create payment order', details: error.message });
   }
 });
 
