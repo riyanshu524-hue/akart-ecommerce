@@ -195,7 +195,7 @@ export default class ProductsPage extends BasePage {
 
       const data = await api.get(`/products?${params.toString()}`);
       this.products = data.products || [];
-      this.totalPages = data.pagination?.pages || 1;
+      this.totalPages = data.totalPages || 1;
     } catch (error) {
       console.error('Error fetching products:', error);
       this.products = [];
@@ -226,7 +226,7 @@ export default class ProductsPage extends BasePage {
   createProductCard(product) {
     const rating = product.rating || 0;
     const stars = '⭐'.repeat(Math.floor(rating));
-    const image = product.product_images?.[0]?.image_url || '/placeholder.jpg';
+    const image = product.image || '/placeholder.jpg';
     
     return `
       <div class="card-product hover-lift">
