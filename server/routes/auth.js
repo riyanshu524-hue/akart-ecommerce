@@ -4,156 +4,321 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// ======================================================
+// Environment Variables
+// ======================================================
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error('Missing Supabase credentials');
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 const JWT_SECRET = process.env.JWT_SECRET || 'akart-secret-key-2026';
 
-// Register user with Supabase Auth
+if (!SUPABASE_URL) {
+  throw new Error('SUPABASE_URL is missing');
+}
+
+if (!SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY is missing');
+}
+
+if (!SUPABASE_KEY) {
+  throw new Error('SUPABASE_KEY is missing');
+}
+
+// ======================================================
+// Supabase Clients
+// ======================================================
+
+// Admin Client (Database Operations)
+const supabaseAdmin = createClient(
+  SUPABASE_URL,
+  SUPABASE_SERVICE_ROLE_KEY
+);
+
+// Public Auth Client (Login)
+const supabase = createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+// ======================================================
+// REGISTER
+// ======================================================
+
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
 
-    if (!email || !password || !name) {
-      return res.status(400).json({ success: false, error: 'Missing required fields' });
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Name, email and password are required'
+      });
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ success: false, error: 'Password must be at least 6 characters' });
+      return res.status(400).json({
+        success: false,
+        error: 'Password must be at least 6 characters'
+      });
     }
 
-    // Create user in Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+    // Check if email already exists
+    const { data: existing } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email already registered'
+      });
+    }
+
+    // Create Auth User
+    const {
+      data: authData,
+      error: authError
+    } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true
     });
 
     if (authError) {
-      console.error('Auth error:', authError);
-      return res.status(400).json({ success: false, error: authError.message });
+      console.error(authError);
+
+      return res.status(400).json({
+        success: false,
+        error: authError.message
+      });
     }
 
-    // Create profile in profiles table
-    const { data: profileData, error: profileError } = await supabase
+    // Create Profile
+    const {
+      data: profile,
+      error: profileError
+    } = await supabaseAdmin
       .from('profiles')
       .insert({
         id: authData.user.id,
-        email,
         name,
-        created_at: new Date(),
-        updated_at: new Date()
+        email,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       })
       .select()
       .single();
 
     if (profileError) {
-      console.error('Profile error:', profileError);
-      // Delete the auth user if profile creation fails
-      await supabase.auth.admin.deleteUser(authData.user.id);
-      return res.status(400).json({ success: false, error: 'Failed to create profile' });
+
+      console.error(profileError);
+
+      // Rollback auth user
+      await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+
+      return res.status(500).json({
+        success: false,
+        error: 'Failed to create profile'
+      });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
-      { userId: authData.user.id, email },
+      {
+        userId: profile.id,
+        email: profile.email
+      },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      {
+        expiresIn: '30d'
+      }
     );
 
-    res.json({
+    return res.json({
       success: true,
+      token,
       user: {
-        id: profileData.id,
-        email: profileData.email,
-        name: profileData.name
-      },
-      token
+        id: profile.id,
+        name: profile.name,
+        email: profile.email
+      }
     });
-  } catch (error) {
-    console.error('Register error:', error);
-    res.status(500).json({ success: false, error: 'Registration failed' });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      error: 'Registration failed'
+    });
+
   }
 });
+// ======================================================
+// LOGIN
+// ======================================================
 
-// Login endpoint - FIXED
 router.post('/login', async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, error: 'Email and password required' });
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required'
+      });
     }
 
-    // Get user profile from database
-    const { data: profileData, error: profileError } = await supabase
+    // Authenticate with Supabase Auth
+    const {
+      data: authData,
+      error: authError
+    } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (authError || !authData.user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
+    }
+
+    // Get user profile
+    const {
+      data: profile,
+      error: profileError
+    } = await supabaseAdmin
       .from('profiles')
       .select('*')
-      .eq('email', email)
+      .eq('id', authData.user.id)
       .single();
 
-    if (profileError || !profileData) {
-      console.error('Profile not found:', profileError);
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
+    if (profileError || !profile) {
+      return res.status(404).json({
+        success: false,
+        error: 'Profile not found'
+      });
     }
 
-    // Verify password (in production, use bcrypt)
-    // For now, we accept any non-empty password
-    if (!password || password.length < 1) {
-      return res.status(401).json({ success: false, error: 'Invalid credentials' });
-    }
-
-    // Generate JWT token
     const token = jwt.sign(
-      { userId: profileData.id, email: profileData.email },
+      {
+        userId: profile.id,
+        email: profile.email
+      },
       JWT_SECRET,
-      { expiresIn: '30d' }
+      {
+        expiresIn: '30d'
+      }
     );
 
-    res.json({
+    return res.json({
       success: true,
+      token,
       user: {
-        id: profileData.id,
-        email: profileData.email,
-        name: profileData.name
-      },
-      token
+        id: profile.id,
+        name: profile.name,
+        email: profile.email
+      }
     });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, error: 'Login failed' });
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      error: 'Login failed'
+    });
   }
 });
+// ======================================================
+// LOGOUT
+// ======================================================
 
-// Logout endpoint
-router.post('/logout', (req, res) => {
+router.post('/logout', async (req, res) => {
   try {
-    res.json({ success: true, message: 'Logged out successfully' });
-  } catch (error) {
-    console.error('Logout error:', error);
-    res.status(500).json({ success: false, error: 'Logout failed' });
+    // Client removes its own JWT.
+    // No server-side session to destroy.
+
+    return res.json({
+      success: true,
+      message: 'Logged out successfully'
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      error: 'Logout failed'
+    });
   }
 });
 
-// Verify token endpoint
+// ======================================================
+// VERIFY TOKEN
+// ======================================================
+
 router.get('/verify', async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ success: false, error: 'No token provided' });
+
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authorization header missing'
+      });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
-    res.json({ success: true, user: decoded });
-  } catch (error) {
-    console.error('Token verification error:', error);
-    res.status(401).json({ success: false, error: 'Invalid token' });
+    const token = authHeader.replace('Bearer ', '');
+
+    let decoded;
+
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid or expired token'
+      });
+    }
+
+    const { data: profile, error } = await supabaseAdmin
+      .from('profiles')
+      .select('*')
+      .eq('id', decoded.userId)
+      .single();
+
+    if (error || !profile) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: {
+        id: profile.id,
+        name: profile.name,
+        email: profile.email
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      error: 'Token verification failed'
+    });
   }
 });
 
