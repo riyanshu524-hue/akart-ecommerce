@@ -28,7 +28,7 @@ router.post('/create-order', async (req, res) => {
     // Create Razorpay order directly
       console.log("Amount received:", amount);
     const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(amount * 100),
+      amount: Math.round(amount),
       currency,
       receipt: receipt || 'order_' + Date.now(),
       notes: {
