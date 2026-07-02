@@ -757,16 +757,39 @@ async function loadProducts() {
     const container = document.getElementById('productsGrid') || document.getElementById('featuredProducts');
     if (container && data.products) {
       container.innerHTML = data.products.slice(0, 8).map(product => `
-        <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; transition: transform 0.2s;">
-          <div style="background: #f3f4f6; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 3rem;">${product.image || '📦'}</div>
-          <div style="padding: 1rem;">
-            <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem;">${product.name}</h3>
-            <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">${product.description?.substring(0, 50)}...</p>
-            <p style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: bold; color: #ff6b35;">${Utils.formatPrice(product.price)}</p>
-            <button onclick="Cart.addItem({id: ${product.id}, name: '${product.name}', price: ${product.price}}); Utils.showToast('Added to cart!', 'success');" class="btn btn-primary" style="width: 100%; cursor: pointer; padding: 0.75rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;">Add to Cart</button>
-          </div>
-        </div>
-      `).join('');
+  <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; transition: transform 0.2s;">
+
+    <img
+      src="${product.image || '/placeholder.jpg'}"
+      alt="${product.name}"
+      style="width:100%; height:200px; object-fit:cover; display:block; background:#f3f4f6;"
+      onerror="this.src='/placeholder.jpg'"
+    >
+
+    <div style="padding: 1rem;">
+      <h3 style="margin: 0 0 0.5rem 0; font-size: 1rem;">
+        ${product.name}
+      </h3>
+
+      <p style="margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem;">
+        ${product.description?.substring(0, 50)}...
+      </p>
+
+      <p style="margin: 0 0 1rem 0; font-size: 1.1rem; font-weight: bold; color: #ff6b35;">
+        ${Utils.formatPrice(product.price)}
+      </p>
+
+      <button
+        onclick="Cart.addItem({id: ${product.id}, name: '${product.name}', price: ${product.price}}); Utils.showToast('Added to cart!', 'success');"
+        class="btn btn-primary"
+        style="width: 100%; cursor: pointer; padding: 0.75rem; border: none; background: #ff6b35; color: white; border-radius: 0.25rem; font-weight: 600;"
+      >
+        Add to Cart
+      </button>
+    </div>
+
+  </div>
+`).join('');
     }
   } catch (error) {
     console.error('Error loading products:', error);
